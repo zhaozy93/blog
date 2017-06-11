@@ -28,5 +28,7 @@
 
 * [jQuery chapter1 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/2)
 
+* [jQuery chapter2 Sizzle----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/4)
+
 
 
