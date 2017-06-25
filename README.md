@@ -32,5 +32,7 @@
 
 * [jQuery chapter2 Sizzle----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/4)
 
+* [jQuery chapter 4 数据缓存Data----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/7)
+
 * [jQuery chapter3 Deferred Object异步队列----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/5)
 
