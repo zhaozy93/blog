@@ -27,6 +27,8 @@
 
 * [谈谈BFC](https://github.com/zhaozy93/blog/issues/8)
 
+* [谈谈块级元素](https://github.com/zhaozy93/blog/issues/9)
+
 ## jQuery
 * [jQuery笔记small ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/3)
 
