@@ -18,7 +18,7 @@
 
 * [Object.is 与 === 和 == 的探究](https://github.com/AllFE/blog/issues/6)
 
-* [关于new的认识、附带lazyman和currying的理解](https://github.com/AllFE/blog/issues/6)
+* [关于new的认识、附带lazyman和currying的理解](https://github.com/zhaozy93/blog/issues/6)
 
 ## CSS
 * [width、clientWidth、offsetWidth、computedStyle浅析](https://github.com/zhaozy93/blog/issues/1)
