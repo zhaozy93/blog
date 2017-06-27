@@ -25,6 +25,8 @@
 
 * [canvas 动点与动线动画， 类似知乎登陆背景](https://github.com/AllFE/blog/issues/4)
 
+* [谈谈BFC](https://github.com/zhaozy93/blog/issues/8)
+
 ## jQuery
 * [jQuery笔记small ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/3)
 
