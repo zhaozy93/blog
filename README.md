@@ -43,3 +43,5 @@
 * [jQuery chapter4 数据缓存Data----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/7)
 
 * [jQuery chapter5 队列Queue ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/10)
+
+* [jQuery chapter6 兼容性测试 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/12)(17-07-05)
