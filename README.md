@@ -22,6 +22,8 @@
 
 * [关于new的认识、附带lazyman和currying的理解](https://github.com/zhaozy93/blog/issues/6)
 
+* [更好的管理你的ajax](https://github.com/zhaozy93/blog/issues/14)(17-07-23)
+
 ## CSS
 * [width、clientWidth、offsetWidth、computedStyle浅析](https://github.com/zhaozy93/blog/issues/1)
 
