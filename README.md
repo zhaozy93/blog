@@ -12,6 +12,8 @@
 
 * [Immutable Map和List详解](https://github.com/AllFE/blog/issues/2)
 
+* [Immutable 文档的翻译 未完成](https://github.com/zhaozy93/rubbish-things/tree/master/immutable.js)
+
 * [javascript function前的符号 与 立即执行函数解析](https://github.com/AllFE/blog/issues/3)
 
 * [用async丰满你的ajax](https://github.com/AllFE/blog/issues/5)
