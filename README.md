@@ -50,4 +50,4 @@
 
 ## react
 
-* [轮播图组件 react banner slider(17-07-23)](https://github.com/zhaozy93/blog/issues/13)
+* [轮播图组件 react banner slider](https://github.com/zhaozy93/blog/issues/13)(17-07-23)
