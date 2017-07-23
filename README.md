@@ -45,3 +45,7 @@
 * [jQuery chapter5 队列Queue ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/10)
 
 * [jQuery chapter6 兼容性测试 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/12)(17-07-05)
+
+## react
+
+* [轮播图组件 react banner slider(17-07-23)](https://github.com/zhaozy93/blog/issues/13)
