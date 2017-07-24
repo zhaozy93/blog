@@ -50,6 +50,8 @@
 
 * [jQuery chapter6 兼容性测试 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/12)(17-07-05)
 
+* [jQuery chapter7 事件系统 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/15)(17-07-25)
+
 ## react
 
 * [轮播图组件 react banner slider](https://github.com/zhaozy93/blog/issues/13)(17-07-23)
