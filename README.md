@@ -54,6 +54,8 @@
 
 * [jQuery chapter7 事件系统 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/15)(17-07-25)
 
+* [jQuery chapter8 属性操作 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/17)(17-07-30)
+
 ## react
 
 * [轮播图组件 react banner slider](https://github.com/zhaozy93/blog/issues/13)(17-07-23)
