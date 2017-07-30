@@ -24,6 +24,8 @@
 
 * [更好的管理你的ajax](https://github.com/zhaozy93/blog/issues/14)(17-07-23)
 
+* [跨域问题详解](https://github.com/zhaozy93/blog/issues/16)(17-07-30)
+
 ## CSS
 * [width、clientWidth、offsetWidth、computedStyle浅析](https://github.com/zhaozy93/blog/issues/1)
 
