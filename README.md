@@ -38,7 +38,7 @@
 * [读写CSS](https://github.com/zhaozy93/blog/issues/11)(17-07-04)
 
 ## jQuery
-* [jQuery笔记small ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/3)
+* [jQuery笔记small + 总结 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/3)(17-08-06)
 
 * [jQuery chapter1 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/2)
 
