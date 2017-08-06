@@ -8,6 +8,8 @@
 
 ## JS
 
+* [ES5 Object.defineProperty 与 ES6 Proxy](https://github.com/zhaozy93/blog/issues/21)(17-08-06)
+
 * [Immutable初识](https://github.com/AllFE/blog/issues/1)
 
 * [Immutable Map和List详解](https://github.com/AllFE/blog/issues/2)
@@ -61,6 +63,7 @@
 * [jQuery chapter10 DOM操作 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/19)(17-08-05)
 
 * [jQuery chapter11 Style操作 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/20)(17-08-05)
+
 ## react
 
 * [轮播图组件 react banner slider](https://github.com/zhaozy93/blog/issues/13)(17-07-23)
