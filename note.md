@@ -211,3 +211,124 @@ parseFloat()
   IE： window.CollectGarbage()
   
   Opera: window.opera.collect()
+
+21、new Array()
+
+使用`new Array()` 与 `Array()`效果是一样的。
+
+`new Array(arg)` 参数长度为1时要注意：
+```js
+  new Array(20) // []长度为20，用undefined填充
+  new Array('20') // [ '20' ]  长度为1，内容为字符串20
+  [,,,]  // IE8及其以下为 [undefined, undefined, undefined, undefined]
+          // 其余浏览器为 [undefined, undefined, undefined ]
+          // 也就是说最后一位尽量不要留逗号
+```
+
+22、数组方法
+
+  - 改变原数组：reverse、sort、
+  - 产生新数组：slice、concat、splice
+  - 其余方法：indexOf、lastIndexOf、reduce、reduceRight、every、filter、forEach、map、some、
+
+23、Array.prototype.indexOf()
+
+ 可以接受第二个参数表示查找的开始位置 arr.indexOf(searchElement[, fromIndex])
+
+24、Date()
+
+```js
+// 两者返回的是距离1970、1、1零时的毫秒数
+Date.parse() // 需要看浏览器心情，差异性很大
+Date.UTC(2005, 4, 1, 1, 59, 59)  // 年、月、日、时、分、秒    月0-11 省略日默认1， 其余省略默认0
+
+Date.now() // 静态方法获取当前时间毫秒数
++ new Date() // 在不支持的浏览器上兼容
+
+```
+
+25、 函数复制
+
+函数复制(赋值)是真的复制。看例子
+
+```js
+// example 1
+function a(){ console.log('a') }
+b = a;
+a();   // ok
+b();   // ok
+a = null;
+a();   //error
+b()    // ok
+// example 2
+var a = function(){ console.log('a') }
+b = a;
+a();   // ok
+b();   // ok
+a = null;
+a();   //error
+b()    // ok
+```
+
+26、arguments.callee  ！！！ 不建议使用，不允许使用
+
+一个神奇的方法，可以获得参数的调用函数自身，在递归中可以使用，方便获取自身。但是！！！
+
+警告：在严格模式下，第5版 ECMAScript (ES5) 禁止使用 arguments.callee()。当一个函数必须调用自身的时候, 避免使用 arguments.callee(), 通过要么给函数表达式一个名字,要么使用一个函数声明.
+
+27、Function.caller   ！！！ 不建议使用，不允许使用
+
+caller是javascript函数的一个属性，它指向调用当前函数的函数，如果函数是在全局范围内调用的话，那么caller的值为null。
+
+28、arguments.caller  ！！！ 不建议使用，不允许使用
+
+arguments.caller 这是我们遇到的第二个caller，没啥用，在严格模式下无法访问，非严格模式下值也为undefined，而且貌似被废弃了
+
+29、String.prototype.slice、String.prototype.substring.prototype.substr
+
+只传入一个参数，且为正数，则结果一致，表示从某一位开始截取到最后
+
+传入两个正参数，slice、与 substring结果一致，表示从第几位到第几位， substr表示从第几位开始截取几位长度的字符串
+
+slice中负数表示倒着数就可以了
+
+substr只能识别第一位为负数，第二位出现负数会将第二位转为0
+
+substring会将所有负数转为0
+```js
+var a = 'hello world';
+a.slice(4); //"o world"
+a.slice(4,7);  //"o w"
+a.slice(-7, -4); //"o w"
+
+a.substring(4); //"o world"
+a.substring(4,7);  //"o w"
+a.substring(-4);  //"hello world"
+a.substring(-4, -7);  //""
+
+a.substr(4);  //"o world"
+a.substr(4, 1);  //"o"
+a.substr(-1); //"d"
+a.substr(-1, 0); //""
+```
+
+30、String.prototype.replace
+
+如果参数1传入的是字符串，那么只会替换一次，传入带有g符号的正则才会全局替换
+
+31、String.prototype.localCompare
+
+`str.localCompare(str2)`按字符一个一个比较两者之间在字符标的前后顺序，如果str在str2参数之前返回-1， 如果在其之后返回1， 相等返回0
+
+32、String.fromCharCode()
+
+所做之事与charCodeAt()刚好相反
+
+`String.fromCharCode(104, 101, 108, 108, 111)` --> 'hello'
+
+33、Math
+```js
+Math.ceil() // 向上取舍
+Math.floor() // 向下取舍
+Math.round() // 标准取舍
+```
