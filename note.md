@@ -332,3 +332,115 @@ Math.ceil() // 向上取舍
 Math.floor() // 向下取舍
 Math.round() // 标准取舍
 ```
+
+34、Object.key 数据属性、访问器属性
+
+对象的每一个属性(property)都包含数据属性和访问器属性。
+数据属性包含`[[Configurable]] [[Enumerable]]  [[Writable]] [[Value]]`
+访问器属性包含`[[Configurable]] [[Enumerable]]  [[Get]] [[Set]]`
+
+可以看出两者都包含`[[Configurable]] [[Enumerable]]`属性。 那什么时候会用到呢
+```js
+let book = {};
+Object.defineProperty(book, 'author', {});
+// 在这里第三个属性就是描述属性， 但是只能传入数据属性或者访问器属性，不能串了，否则报错
+```
+
+35、Object.getPrototypeOf(obj)
+
+获取一个对象的原型， 也是chrome私有实现的`obj.__proto__`的规范实现
+
+36、for in、Object.keys()、Object.getWonPropertyNames()
+
+- for..in.. 是对某个对象的可枚举属性进行遍历，不保证属性出现顺序，不保证属性属于对象本身还是原型链
+- Object.keys() 是某个对象的所有可枚举属性名组成的数组，数组内容与for..in..一致，甚至顺序与for..in..一致。
+- Object.getWonPropertyNames() 同样返回一个数组，但是返回的是对象自身的所有属性名组成的数组
+
+37、Object.create(proto, properties)
+
+Object.create(proto) 作为一种常见的实现继承的方式已经不难理解，但它还接受第二个参数，并且第二个参数与Object.definieProperties()的第二个参数格式一致，将作为新对象的熟悉。
+
+38、location 
+
+location即属于window对象又属于document，并且两者是对同一对象的引用 `window.location === document.location`。
+```js
+location.assign(new_url); //location.href、window.location赋值也是触发此函数
+location.replace(new_url);
+location.reload();
+```
+
+39、检测浏览器插件
+
+浏览器插件在很多时候是很多网站工作的必备元素，例如很多网站需要flash， 可以提前检测flash，如果不存在就让提示用户去下载。
+
+在标准浏览器中呢
+```js
+navigator.plugins  // 返回一个数组，包含当前开启的所有插件
+plugin = {
+  description : "Enables Widevine licenses for playback of HTML audio/video content. (version: 1.4.8.1000)",
+  filename : "widevinecdmadapter.plugin",
+  length : 1,
+  name : "Widevine Content Decryption Module"
+}
+```
+IE
+```js
+try{
+  new ActiveXObject(COMname)
+  return true;
+}catch(e){
+  return false;
+}
+```
+
+40、HTMLCollection
+
+`HTMLCollection[0]、HTMLCollection.item(0)、HTMLCollection.namedItem('name')`
+当我们通过document.getElementsByXX获取到的是一个HTMLCollection类数组对象，它可以直接通过下标[0]来获取第一个元素，也可以通过.item(0)来获取第一个元素，同时还可以HTMLCollection.namedItem('name')来根据name属性获取对应元素
+
+41、NodeList、NamedNodeMap、HTMLCollection实时动态性
+
+这三个神奇的亲属关系的元素类型有一个神奇的特点。那就是特们总是保持最新的页面元素。换句话讲什么意思呢，代码表示
+```js
+var a = document.getElementsByTagName('div'); // a.length = 249
+document.body.append(document.createElement('div'));
+a.length // 250
+```
+看到没，明明对a(HTMLCollection)没有操作,但是a的内容却根据页面的变化而实际变化。 所以对这三者的操作要注意。
+
+- NodeList由`Node.childNodes 和 document.querySelectorAll`产生
+- HTMLCollection由`Element.getElementsBy`产生
+(JS高级编程10.2.4标出，但实测chrome下document.querySelectorAll产生的NodeList并不具有像getElementsByTagName获取到的HTMLCollection那样具有实时动态性)
+(但是实测a = document.body.childNodes产生的NodeList具有实时动态性)
+
+42、compatMode 渲染模式
+
+渲染模式一般分为标准模式和混杂模式。 document.compatMode可以获取当前的渲染模式，值为 CSS1Compat 或者 BackCompate。 那种是标准应该非常容易分辨喽
+
+43、Element.insertAdjacentElement( position, element);
+
+方法将一个给定的元素节点插入到相对于被调用的元素的给定的一个位置。
+这个方法的兼容性简直爆炸，can.i.use显示基本全部兼容(firefox47以前不兼容)，但好像平时很少使用它。
+
+```js
+/*
+'beforebegin': 在该元素本身的前面. 作为同级元素
+'afterbegin':只在该元素当中, 在该元素第一个子孩子前面.
+'beforeend':只在该元素当中, 在该元素最后一个子孩子后面.
+'afterend': 在该元素本身的后面. 作为同级元素
+*/
+document.body.('afterbegin', document.createElement('div'))
+```
+
+44、contains
+
+如果判断一个元素是不是某个元素的子元素，可以直接通过`parentElem.contains(childElem)`的结果true or false来判断，而且兼容性还是很好的，除了在非常低的safari下(但是apple的升级率很高啊，哪还有低版本safari)
+
+45、scrollIntoView、scrollIntoViewIfNeeded
+
+两者都是作用在元素上的， 
+- elem.scrollIntoViewIfNeeded会判断当前元素是不是在显示区域内，如果不在就滚动页面让其显示，
+- elem.scrollIntoView会滚动页面让元素显示在最上方
+scrollIntoView兼容性不错，scrollIntoViewIfNeeded则惨不忍睹
+
+46、

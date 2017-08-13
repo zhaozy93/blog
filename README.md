@@ -7,7 +7,7 @@
 * [fiddle](https://jsfiddle.net/user/peaNut93/fiddles/)
 
 ## JS
-* [JS 杂碎点笔记](https://github.com/zhaozy93/blog/issues/22)
+* [JS 高程杂碎点笔记](https://github.com/zhaozy93/blog/issues/22)
 
 * [ES5 Object.defineProperty 与 ES6 Proxy](https://github.com/zhaozy93/blog/issues/21)(17-08-06)
 
