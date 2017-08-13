@@ -443,4 +443,42 @@ document.body.('afterbegin', document.createElement('div'))
 - elem.scrollIntoView会滚动页面让元素显示在最上方
 scrollIntoView兼容性不错，scrollIntoViewIfNeeded则惨不忍睹
 
-46、
+46、DOM2增加了xhtml命名空间
+
+html本身是不支持命名空间的，但由于xml支持，所以xhtml也支持了命名空间。
+
+与命名空间相关的方法在方法名字中都有`NS`或者以`NS`结尾。
+
+47、document.defaultView、document.parentWindow
+
+使用document.defaultView是获取window的一个途径，有时是在elem.ownerDocument.defaultView, 但此方法在IE9以下不被支持，替代方法 document.parentWindow
+
+48、访问iframe内容
+
+iframeElem.contentDocument || iframeElem.contentWindow.document
+
+49、style操作
+
+`window.getComputedStyle(elem)` 返回的样式是一个实时的 CSSStyleDeclaration 对象，当元素的样式更改时，它会自动更新本身;
+```js
+CSSStyleDeclaration.cssText;
+CSSStyleDeclaration.length;
+CSSStyleDeclaration.parentRule;
+CSSStyleDeclaration.getPropertyPriority(propertyName);
+CSSStyleDeclaration.getPropertyValue(propertyName);
+CSSStyleDeclaration.setProperty(propertyName, value, priority)
+CSSStyleDeclaration.removeProperty(propertyName)
+```
+
+50、offset、client
+  - 偏移量 offsetHeight、offsetWidth不包含margin、包含border、padding
+  - 客户区 clientHeight、clientWidth只包含padding
+
+51、document.createNodeIterator(elem)、document.createTreeWalker(elem)
+
+ - createNodeIterator：返回Iterator遍历对象，可以用来nextNode()一直循环便利elem的所有元素
+ - createTreeWalker: 返回一个方法更佳丰富的遍历对象
+
+52、document.createRange()
+
+范围，可以选择文档的一个区域，IE单独实现的是document.createTextRange()。 range表示包含节点和部分文本节点的文档片段。  一般在处理选择文本是常用到。
