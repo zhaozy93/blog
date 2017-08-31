@@ -29,6 +29,8 @@
 
 * [跨域问题详解](https://github.com/zhaozy93/blog/issues/16)(17-07-30)
 
+* [原型链与继承](https://github.com/zhaozy93/blog/issues/23)(17-08-30)
+
 ## CSS
 * [width、clientWidth、offsetWidth、computedStyle浅析](https://github.com/zhaozy93/blog/issues/1)
 
