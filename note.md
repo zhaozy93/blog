@@ -482,3 +482,153 @@ CSSStyleDeclaration.removeProperty(propertyName)
 52、document.createRange()
 
 范围，可以选择文档的一个区域，IE单独实现的是document.createTextRange()。 range表示包含节点和部分文本节点的文档片段。  一般在处理选择文本是常用到。
+
+53、canvas宽与高
+
+canvas元素比较特殊有两个尺寸，一个叫元素尺寸，一个是绘图尺寸。
+- canvas.style / css方式更改的事元素尺寸
+- canvas.width  / <canvas width=xxx></canvas> 更改的事绘图尺寸
+- canvas默认两个尺寸都是300*150
+- 因此如果只改变元素尺寸，实际绘图可能会被放大或者缩小
+- 只更改绘图尺寸可能造成图片不能占满或者超出元素大小
+
+54、 Error
+- Error  所有错误的基类
+- EvalError  调用eval方法时
+- RangeError 
+- ReferenceError
+- SyntaxError
+- TypeError  保存意外类型 或者访问不存在的方法时
+- URIError  encodeURI和decodeURI时出错
+
+55、JSON
+
+- JSON.stringify在序列化对象时函数和原型成员都会被忽略掉，同时undefined的任何属性也会被忽略掉。
+- JSON.stringify第二个参数 过滤器
+  ``` js
+    a = { a: 1, b:2, c:3 };
+    // 数组格式   表示保留的属性名
+    JSON.stringify(a, ['b', 'a']);   // "{"b":2,"a":1}"
+    JSON.stringify(a, ['b'])  // "{"b":2}"
+    // 函数格式 过滤函数
+    JSON.stringify(a, (key, value)=>{ 
+      if(key === 'a') {
+        return 10000
+      } else {
+        return value
+      }
+    })   // "{"a":10000,"b":2,"c":3}"
+  ```
+- JSON.stringify第二个参数  缩紧和空白符, 范围为0-10的数字 表示缩紧和空白符，可读性更高
+  ``` js
+    JSON.stringify(a, null, 4);
+    // "{
+    //    "a": 1,
+    //    "b": 2,
+    //    "c": 3
+    // }"
+  ```
+  - JSON.parse 第二个参数是还原函数，也就是JSON.stringify对应的过滤函数
+  ```js
+    a = { a: 1, b:2, c:3, d: new Date() };
+    aa = JSON.stringify(a);
+    JSON.parse(aa, (key, value)=>{
+      if(key === 'd'){
+        return new Date(value)
+      } else {
+        return value
+      }
+    })
+  ```
+
+56、 http状态码 常用
+-  200 OK
+- 204 No Content 没有新文档，浏览器应该继续显示原来的文档。如果用户定期地刷新页面，而Servlet可以确定用户文档足够新，这个状态代码是很有用的
+-  301 Moved Permanently  永久性转移， 客户请求的文档在其他地方，新的URL在Location头中给出，浏览器应该自动地访问新的URL
+-  302 Found  临时性转移，类似于301，但新的URL应该被视为临时性的替代
+-  304 Not Modified
+-  307 Temporary Redirect    和302（Found）相同。许多浏览器会错误地响应302应答进行重定向，即使原来的请求是 POST，即使它实际上只能在POST请求的应答是303时才能重定向。由于这个原因，HTTP 1.1新增了307，以便更加清除地区分几个状态代码： 当出现303应答时，浏览器可以跟随重定向的GET和POST请求；如果是307应答，则浏览器只能跟随对GET请求的重定向。
+-  400 Bad Request
+-  401 Unauthorized
+-  403 Forbidden
+-  404 Not Found
+-  405 Method Not Allowed 请求方法（GET、POST、HEAD、Delete、PUT、TRACE等）对指定的资源不适用。
+-  406 Not Acceptable 指定的资源已经找到，但它的MIME类型和客户在Accpet头中所指定的不兼容
+-  410 Gone 所请求的文档已经不再可用，而且服务器不知道应该重定向到哪一个地址。它和404的不同在于，返回407表示文档永久地离开了指定的位置，而404表示由于未知的原因文档不可用。
+-  500 Internal Server Error
+-  501 Not Implemented
+-  502 Bad Gateway 服务器作为网关或者代理时，为了完成请求访问下一个服务器，但该服务器返回了非法的应答
+
+57、防篡改对象
+- Objec.preventExtensions  对象不能新增属性, 但原有属性可以更改 严格模式新增属性报错  
+- Object.isExtensible检测
+- Object.seal  对象不能扩展、且现有属性的[[Configurable]]将变为false，意味着不能被删除
+- Object.isSealed检测
+- Object.freeze 对象既不能扩展，也不能修改
+- Object.isFrozen检测
+
+58、监测网络状态
+- navigator.onLine属性可以查找到 true／false，但是存在bug，规范不统一
+- 为window添加online、offline事件， 可以获得网络状态变化事件
+```js
+  window.addEventListener('offline', ()=>{alert('offline')})
+  window.addEventListener('offline', ()=>{alert('online')})
+```
+
+59、应用缓存、离线应用、application cache、appcache
+- 关联描述文件  <html manifest="/offline.manifest">
+- 描述文件
+  ```
+    CACHE MANIFEST
+    #Comment
+
+    file.js
+    file.css
+  ```
+- window.applicationCache是浏览器用来查看缓存文件的对象
+
+60、globalStorage
+- globalStorage 不是通用实现
+- globalStorage 不是Storage的实现
+- globalStorage['wrox.com] 才是Storage的实现
+- globalStorage 目的是允许持久化数据跨域存储
+
+61、IndexedDB 数据库存储
+- IndexedDB不是标准API，需要做判断
+- IndexedDB所有获取与设置操作都为异步操作， 基本都需要onsuccess、onerror回调函数。
+- IndexedDB需要在onupgradeneeded里面获取db的指针， 不可以在onsuccess里面获取
+- IndexedDB更新很快， 介绍setVersion的文章都是过期文章
+```js
+// 增加示例
+window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;   
+if(!window.indexedDB)
+{
+  console.log("Your Browser does not support IndexedDB");
+}
+let request = window.indexedDB.open('test', '2.0');
+request.onsuccess = (e)=>{console.log('success')}
+request.onerror = (e)=>{console.log('error')}
+request.onupgradeneeded = (e)=>{ 
+  window.db = e.target.result; 
+  window.objectStore = db.createObjectStore("students", { keyPath : "rollNo" });
+  console.log('onup')
+};
+setTimeout(()=>{
+  let transaction = db.transaction(["students"],"readwrite");
+  transaction.oncomplete = function(event) {
+      console.log("Success :)");
+  };
+  transaction.onerror = function(event) {
+      console.log("Error :(");
+  };
+  let objectStore = transaction.objectStore("students");
+
+  objectStore.add({rollNo: rollNo, name: name});
+}, 200)
+```
+
+62、Page Visibility API
+现在iqiyi、pandatv的页面如果是后台标签页打开都不会开启播放，只是渲染页面。 大概就是使用这样的思路， 先判断页面是否是可见页面，如果不是可见页面就不播放视频。
+- document.hidden
+- document.visibilityState
+- visibilitychange
