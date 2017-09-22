@@ -187,8 +187,16 @@
   // should be iterated as an array or as an object.
   // Related: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength
   // Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094
+  // Math.pow(2, 53) - 1 是js中能表示的最大整数
   var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+  // 一个简易方法用于获取对象的length属性
   var getLength = shallowProperty('length');
+  // 判断类数组对象的方法
+  // 真正的数组
+  // { length : 1} 这样的对象
+  // arguments 对象
+  // nodeList对象
+  // jQuery对象
   var isArrayLike = function(collection) {
     var length = getLength(collection);
     return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
@@ -200,6 +208,9 @@
   // The cornerstone, an `each` implementation, aka `forEach`.
   // Handles raw objects in addition to array-likes. Treats all
   // sparse array-likes as if they were dense.
+  // 对数组或者对象进行遍历操作
+  // 传入的遍历函数会接手3个参数 item、index/key、array\object
+  // 前面也见过optimizeCb函数了 主要作用就是绑定this和增加执行参数而已
   _.each = _.forEach = function(obj, iteratee, context) {
     iteratee = optimizeCb(iteratee, context);
     var i, length;
@@ -217,6 +228,8 @@
   };
 
   // Return the results of applying the iteratee to each element.
+  // 与each forEach非常类似
+  // 也是遍历操作 但是会生成新的数组/对象
   _.map = _.collect = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
     var keys = !isArrayLike(obj) && _.keys(obj),
@@ -230,6 +243,9 @@
   };
 
   // Create a reducing function iterating left or right.
+  // dir来表示方向
+  // dir === 1  表示从左到右
+  // dir === -1 表示从右向左
   var createReduce = function(dir) {
     // Wrap code that reassigns argument variables in a separate function than
     // the one that accesses `arguments.length` to avoid a perf hit. (#1991)
