@@ -115,6 +115,8 @@ JS异步机制
 
 在Windows下，这个事件循环基于IOCP创建， 在*nix下循环基于多线程创建。
 
+注: 观察者中 *idle观察者* 优先于 *IO观察者* 优先于 *check观察者* 
+
 3、请求对象
 
 下图是node中执行fs.open()经历的过程
@@ -141,5 +143,23 @@ IO线程在结束后会调用PostQueuedCompletionStatus(作用是通知IOCP状�
 - 回调通知是IO的第二部分(包含执行回调函数)。
 - 也就是说我们的回调函数不是由我们自己的js调用，所以很多时候try catch是无效的
 
+## 非IO得异步
 
+1、setTimeout、setInterval
+
+两者它们的实现与IO异步类似，只是不需要I/O线程参与。 用setTimeout()或者者setInterval()创建的定时器会插入到定时器观察者内部的一个红黑树中。
+
+之后每次执行Tick询问定时器观察者，如果超过时间了就形成一个事件，然后把回调函数执行。 
+
+所以定时器并不是严格按照时间执行的
+
+2、process.nextTick
+
+如果只是想在下一个循环中执行一个回调的话 可以直接使用process.nextTick, 直接把任务插入到下一次事件循环，比setTimeout((),0 )效率高很多。
+
+3、setImmediate
+
+效果与process.nextTick是一致的，但是有细微差别。
+
+process.next优先级更高，主要是因为process.nextTick属于idle观察者， setImmediate属于check观察者。
 
