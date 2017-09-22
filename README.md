@@ -69,7 +69,7 @@
 
 ## underscore
 
-* [underscore源码解析](https://github.com/zhaozy93/blog/blob/master/underscore/underscore_source_code.md)(17-09-21)
+* [underscore源码解析](https://github.com/zhaozy93/blog/blob/master/underscore/underscore_source_code.js)(17-09-21)
 
 * [underscore重点笔记](https://github.com/zhaozy93/blog/issues/24)(17-09-21)
 
