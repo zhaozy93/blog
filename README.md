@@ -67,6 +67,13 @@
 
 * [jQuery chapter11 Style操作 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/20)(17-08-05)
 
+## underscore
+
+* [underscore源码解析](https://github.com/zhaozy93/blog/blob/master/underscore/underscore_source_code.md)(17-09-21)
+
+* [underscore重点笔记](https://github.com/zhaozy93/blog/issues/24)(17-09-21)
+
+
 ## react
 
 * [轮播图组件 react banner slider](https://github.com/zhaozy93/blog/issues/13)(17-07-23)
