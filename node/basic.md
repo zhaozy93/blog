@@ -163,3 +163,31 @@ IO线程在结束后会调用PostQueuedCompletionStatus(作用是通知IOCP状�
 
 process.next优先级更高，主要是因为process.nextTick属于idle观察者， setImmediate属于check观察者。
 
+## 异步编程缺点与难点
+- 异常处理： 上面也提到过，很多场合使用简单的try catch是不能捕获到cb里面的异常
+- 回调嵌套： 前端也存在这个问题， 万年坑
+- 阻塞代码： 一种语言竟然没有sleep这样的函数
+- 多线程编程： 无法充分利用多核CPU性能
+
+## 异步编程解决方案
+- 事件发布／订阅模式
+- Promise／Deferred模式
+- 流程控制库
+
+# 事件发布／订阅模式
+把回调函数当作一种事件来处理。 有事件的生产者发布消息，由事件监听者订阅消息并执行对应的回调函数。
+
+事件发布与订阅并不是严格意义的异步解决方案，但是它的完成是依赖于事件循环体系，所以也广泛应用于解决异步回调问题。
+```js
+// 订阅
+emitter.on("event1", function (message) {
+    console.log(message); 
+});
+// 发布
+emitter.emit('event1', "I am message!");
+```
+事件除了普通的监听还有特殊的
+```js
+event.once("event1", callback);  // 只可能被执行一次
+proxy.all("template", "data", "resources", callback);  // 多事件之间协同作战
+```
