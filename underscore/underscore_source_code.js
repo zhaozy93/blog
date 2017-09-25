@@ -1142,19 +1142,25 @@
   // ----------------
 
   // Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.
+  // 检测当前浏览器是不是有对象枚举功能上的bug
   var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
+  
   var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
                       'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
 
+  // 应对hasEnumBug情况
   var collectNonEnumProps = function(obj, keys) {
     var nonEnumIdx = nonEnumerableProps.length;
     var constructor = obj.constructor;
-    var proto = _.isFunction(constructor) && constructor.prototype || ObjProto;
+    // 获取对象的原型链或者native Object的原型链
+    var proto = _.isFunction(constructor) && constructor.prototype || Object.prototype;
 
     // Constructor is a special case.
+    // 如果keys中不含有constructor属性 那么增加属性constructor
     var prop = 'constructor';
     if (_.has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
 
+    // 判断其余几个特殊属性， 如果对象本身实现了这个方法 就将这几个属性添加到keys里面
     while (nonEnumIdx--) {
       prop = nonEnumerableProps[nonEnumIdx];
       if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
@@ -1166,6 +1172,8 @@
   // Retrieve the names of an object's own properties.
   // Delegates to **ECMAScript 5**'s native `Object.keys`.
   // 将一个对象的key变成一个数组形式
+  // 先尝试原生的keys方法 
+  // 失败之后再遍历获得key
   _.keys = function(obj) {
     if (!_.isObject(obj)) return [];
     if (nativeKeys) return nativeKeys(obj);
@@ -1201,6 +1209,8 @@
 
   // Returns the results of applying the iteratee to each element of the object.
   // In contrast to _.map it returns an object.
+  // 对对象所有key进行iterate计算的方法
+  // 类似于数组的map
   _.mapObject = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
     var keys = _.keys(obj),
@@ -1215,6 +1225,8 @@
 
   // Convert an object into a list of `[key, value]` pairs.
   // The opposite of _.object.
+  // 将对象转换为 [key, value] 这样形式的数组
+  // 属性出现在数组的先后位置不保证
   _.pairs = function(obj) {
     var keys = _.keys(obj);
     var length = keys.length;
@@ -1226,6 +1238,9 @@
   };
 
   // Invert the keys and values of an object. The values must be serializable.
+  // 将对象的key value 对调
+  // 但是value必须是可序列化的
+  // 一般而言就是我们要假设value为字符串或者数字 不能出现对象数组类型 否则对调后key会转为字符串 "[object Object]" 这样的转换就无意义了
   _.invert = function(obj) {
     var result = {};
     var keys = _.keys(obj);
@@ -1237,6 +1252,8 @@
 
   // Return a sorted list of the function names available on the object.
   // Aliased as `methods`.
+  // 讲一个对象身上所有的function方法提取出来组成数组
+  // 并不是提取真正的function而是 function对应的key属性名
   _.functions = _.methods = function(obj) {
     var names = [];
     for (var key in obj) {
@@ -1292,9 +1309,16 @@
   };
 
   // Return a copy of the object only containing the whitelisted properties.
+  // 提取出对象中要保留的key
+  // 
   _.pick = restArgs(function(obj, keys) {
     var result = {}, iteratee = keys[0];
     if (obj == null) return result;
+    // 实际调用肯定keys不是一个数组 是由restArgs转换成一个数组的
+    // 根据传入的第二个参数是是不是方法来分类
+    // 如果是一个方法那么用这个方法去计算一次原对象对应的值
+    // 如果不是函数那么就keyInObj来代替
+    // 经过计算后的值 如果是true那么就提取这个属性 否则不提取
     if (_.isFunction(iteratee)) {
       if (keys.length > 1) iteratee = optimizeCb(iteratee, keys[1]);
       keys = _.allKeys(obj);
@@ -1312,6 +1336,7 @@
   });
 
   // Return a copy of the object without the blacklisted properties.
+  // 与pick刚好相反
   _.omit = restArgs(function(obj, keys) {
     var iteratee = keys[0], context;
     if (_.isFunction(iteratee)) {
@@ -1332,6 +1357,7 @@
   // Creates an object that inherits from the given prototype object.
   // If additional properties are provided then they will be added to the
   // created object.
+  // 生成一个新对象
   _.create = function(prototype, props) {
     var result = baseCreate(prototype);
     if (props) _.extendOwn(result, props);
@@ -1339,6 +1365,7 @@
   };
 
   // Create a (shallow-cloned) duplicate of an object.
+  // 浅拷贝一个对象
   _.clone = function(obj) {
     if (!_.isObject(obj)) return obj;
     return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
@@ -1347,6 +1374,8 @@
   // Invokes interceptor with the obj, and then returns obj.
   // The primary purpose of this method is to "tap into" a method chain, in
   // order to perform operations on intermediate results within the chain.
+  // 用interceptor执行obj对象 
+  // 然后再返回执行后的对象
   _.tap = function(obj, interceptor) {
     interceptor(obj);
     return obj;
@@ -1367,31 +1396,44 @@
   };
 
 
-  // Internal recursive comparison function for `isEqual`.
+  // Internal recursive comparison function for `isEqual`
   var eq, deepEq;
+  // 先进行简单的两个对象判断
+  // 检测不出来时再进行深层次判断
   eq = function(a, b, aStack, bStack) {
     // Identical objects are equal. `0 === -0`, but they aren't identical.
     // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
+    // 如果两个可以 ===， 那么需要检测+0 与 -0
+    // 如果不是0的情况 那么a !== 0就是true， 否则是 false
+    // 然后如果+0 与 -0 那么最后一个是 Infinity 一个是 -Infinity  则是false
     if (a === b) return a !== 0 || 1 / a === 1 / b;
     // `null` or `undefined` only equal to itself (strict comparison).
+    // 如果两边出现了undefined或者null则直接认为不一致
     if (a == null || b == null) return false;
     // `NaN`s are equivalent, but non-reflexive.
+    // a !== a 那么a就是NaN 
+    // 再判断b是不是NaN即可
     if (a !== a) return b !== b;
     // Exhaust primitive checks
+    // 前面判断完了 ab还不是function和object 那么只能return false
     var type = typeof a;
     if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;
+    // 进行深层次判断
     return deepEq(a, b, aStack, bStack);
   };
 
   // Internal recursive comparison function for `isEqual`.
   deepEq = function(a, b, aStack, bStack) {
     // Unwrap any wrapped objects.
+    // 解锁_对象
     if (a instanceof _) a = a._wrapped;
     if (b instanceof _) b = b._wrapped;
     // Compare `[[Class]]` names.
+    // 如果类都不同 那么直接false
     var className = toString.call(a);
     if (className !== toString.call(b)) return false;
     switch (className) {
+      // 正则和字符串 直接按照字符串来比较
       // Strings, numbers, regular expressions, dates, and booleans are compared by value.
       case '[object RegExp]':
       // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
@@ -1399,6 +1441,7 @@
         // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
         // equivalent to `new String("5")`.
         return '' + a === '' + b;
+        // 数字需要判断NaN 还有 +0 与 -0
       case '[object Number]':
         // `NaN`s are equivalent, but non-reflexive.
         // Object(NaN) is equivalent to NaN.
@@ -1416,11 +1459,15 @@
     }
 
     var areArrays = className === '[object Array]';
+    // 如果不是数组
     if (!areArrays) {
+      // 判断是不是对象 不是对象false
       if (typeof a != 'object' || typeof b != 'object') return false;
 
       // Objects with different constructors are not equivalent, but `Object`s or `Array`s
       // from different frames are.
+      // 通过判断两者构造函数来判断 
+      // 但构造函数不同也不代表真的不同
       var aCtor = a.constructor, bCtor = b.constructor;
       if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
                                _.isFunction(bCtor) && bCtor instanceof bCtor)
@@ -1436,6 +1483,8 @@
     aStack = aStack || [];
     bStack = bStack || [];
     var length = aStack.length;
+    // 后面就是递归调用了
+    // 第一次不会传入aStack和bStack 后面的每次都会
     while (length--) {
       // Linear search. Performance is inversely proportional to the number of
       // unique nested structures.
@@ -1447,6 +1496,7 @@
     bStack.push(b);
 
     // Recursively compare objects and arrays.
+    // 这一块比较好理解 就是数组或者对象 遍历 一层层拿出来 然后对比 中间任何一个环节出了false就直接返回false即可
     if (areArrays) {
       // Compare array lengths to determine if a deep comparison is necessary.
       length = a.length;
@@ -1474,36 +1524,43 @@
   };
 
   // Perform a deep comparison to check if two objects are equal.
+  // 调用内部犯法判断两个参数是否一致
   _.isEqual = function(a, b) {
     return eq(a, b);
   };
 
   // Is a given array, string, or object empty?
   // An "empty" object has no enumerable own-properties.
+  // 是不是空对象
   _.isEmpty = function(obj) {
+    // undefined 和 null 是空对象
     if (obj == null) return true;
     if (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj))) return obj.length === 0;
     return _.keys(obj).length === 0;
   };
 
   // Is a given value a DOM element?
+  // 判断是不是DOm元素
   _.isElement = function(obj) {
     return !!(obj && obj.nodeType === 1);
   };
 
   // Is a given value an array?
   // Delegates to ECMA5's native Array.isArray
+  // 判断数组
   _.isArray = nativeIsArray || function(obj) {
     return toString.call(obj) === '[object Array]';
   };
 
   // Is a given variable an object?
+  // 判断对象object
   _.isObject = function(obj) {
     var type = typeof obj;
     return type === 'function' || type === 'object' && !!obj;
   };
 
   // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError, isMap, isWeakMap, isSet, isWeakSet.
+  // 通用方法来增加is类型判断
   _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function(name) {
     _['is' + name] = function(obj) {
       return toString.call(obj) === '[object ' + name + ']';
@@ -1512,6 +1569,9 @@
 
   // Define a fallback version of the method in browsers (ahem, IE < 9), where
   // there isn't any inspectable "Arguments" type.
+  // 低版本ie判断参数对象的方法比较特殊
+  // 没有'[object Arguments]' 这个类型
+  // 用callee来判断
   if (!_.isArguments(arguments)) {
     _.isArguments = function(obj) {
       return _.has(obj, 'callee');
@@ -1521,6 +1581,8 @@
   // Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,
   // IE 11 (#1621), Safari 8 (#1929), and PhantomJS (#2236).
   var nodelist = root.document && root.document.childNodes;
+  // 如果是node环境 那么nodelist是undefined
+  // 在低版本ie浏览器直接使用typeof来检测是不是函数 而不是用严格模式toString
   if (typeof /./ != 'function' && typeof Int8Array != 'object' && typeof nodelist != 'function') {
     _.isFunction = function(obj) {
       return typeof obj == 'function' || false;
@@ -1528,6 +1590,7 @@
   }
 
   // Is a given object a finite number?
+  // 检测一个数是有限数
   _.isFinite = function(obj) {
     return !_.isSymbol(obj) && isFinite(obj) && !isNaN(parseFloat(obj));
   };
@@ -1554,6 +1617,8 @@
 
   // Shortcut function for checking if an object has a given property directly
   // on itself (in other words, not on a prototype).
+  // 检测当前obj下面是否有path这个属性
+  // path可以是数组表示深层次的属性
   _.has = function(obj, path) {
     if (!_.isArray(path)) {
       return obj != null && hasOwnProperty.call(obj, path);
@@ -1606,6 +1671,7 @@
   };
 
   // Generates a function for a given object that returns a given property.
+  // 返回一个用户获取指定对象 属性的函数
   _.propertyOf = function(obj) {
     if (obj == null) {
       return function(){};
@@ -1626,6 +1692,7 @@
   };
 
   // Run a function **n** times.
+  // 返回一个数组， 每一项为 0-n经过iteratee计算后的结果
   _.times = function(n, iteratee, context) {
     var accum = Array(Math.max(0, n));
     iteratee = optimizeCb(iteratee, context, 1);
@@ -1644,6 +1711,7 @@
   };
 
   // A (possibly faster) way to get the current timestamp as an integer.
+  // 两种获取时间戳的方式
   _.now = Date.now || function() {
     return new Date().getTime();
   };
@@ -1660,6 +1728,7 @@
   var unescapeMap = _.invert(escapeMap);
 
   // Functions for escaping and unescaping strings to/from HTML interpolation.
+  // 利用正则来编码和解码
   var createEscaper = function(map) {
     var escaper = function(match) {
       return map[match];
@@ -1673,12 +1742,14 @@
       return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
     };
   };
+  // 两个编码和解码函数
   _.escape = createEscaper(escapeMap);
   _.unescape = createEscaper(unescapeMap);
 
   // Traverses the children of `obj` along `path`. If a child is a function, it
   // is invoked with its parent as context. Returns the value of the final
   // child, or `fallback` if any child is undefined.
+  // 如果没有传入path 那么那fallback执行obj或者直接返回fallback
   _.result = function(obj, path, fallback) {
     if (!_.isArray(path)) path = [path];
     var length = path.length;
@@ -1698,6 +1769,7 @@
 
   // Generate a unique integer id (unique within the entire client session).
   // Useful for temporary DOM ids.
+  // 用于生成唯一id
   var idCounter = 0;
   _.uniqueId = function(prefix) {
     var id = ++idCounter + '';
@@ -1796,6 +1868,7 @@
   };
 
   // Add a "chain" function. Start chaining a wrapped Underscore object.
+  // 便于链式调用， 生成一个_对象
   _.chain = function(obj) {
     var instance = _(obj);
     instance._chain = true;
@@ -1809,11 +1882,13 @@
   // underscore functions. Wrapped objects may be chained.
 
   // Helper function to continue chaining intermediate results.
+  // 内部工具 让结果变成链式的
   var chainResult = function(instance, obj) {
     return instance._chain ? _(obj).chain() : obj;
   };
 
   // Add your own custom functions to the Underscore object.
+  // 方便扩展_对象
   _.mixin = function(obj) {
     _.each(_.functions(obj), function(name) {
       var func = _[name] = obj[name];
@@ -1827,6 +1902,7 @@
   };
 
   // Add all of the Underscore functions to the wrapper object.
+  // 把所有的_对象方法都添加到原型链上面
   _.mixin(_);
 
   // Add all mutator Array functions to the wrapper.

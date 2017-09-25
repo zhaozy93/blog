@@ -47,4 +47,8 @@ apply与call用法上的的区别就不再重复了，很基础。
     };
   };
 ```
-## 
+## 表达式不能以 { 或者 function开头
+很多时候我们会 [].length， 但是直接执行 {}.valueOf() 会报错， 原因就在于表达式不能以{ 或者 function开头， 但是在下面这行语句中不会报错 因为以！开头
+
+`var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');`
+
