@@ -52,3 +52,33 @@ apply与call用法上的的区别就不再重复了，很基础。
 
 `var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');`
 
+## 类型判断
+在underscore中通过这样的方法来批量产生类型检测方法。
+```js
+_.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {
+  _['is' + name] = function(obj) {
+    return toString.call(obj) === '[object ' + name + ']';
+  };
+});
+```
+但后面还有很多额外的补充措施, 例如 Array、NaN、Finite等
+```js
+_.isArray = Array.isArray || function(obj) {
+  return toString.call(obj) === '[object Array]';
+};
+```
+
+## 可枚举属性 bug
+IE9以下且重写了`['valueOf', 'isPrototypeOf', 'toString','propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString']`这些属性，那么这些属性是不会被for...in...正确返回的。
+
+检测方法 `var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');`
+
+如果有bug的话 那么在for...in...中计算keys就要单独处理了
+
+原本的逻辑判断太复杂了， 简化一下其实就是判断直接读取到的和原型链上面的是不是相等的，如果相等那就是一样的，没有改写 那也就没必要算入keys里面了
+```js
+// proto = (isFunction(obj.constructor) && obj.constructor.prototype) || Object.prototype
+if (obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
+      keys.push(prop);
+    }
+```

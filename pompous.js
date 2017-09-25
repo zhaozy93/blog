@@ -40,3 +40,23 @@ const MAX_SAFE_INTEGER = 9007199254740991
  * 使用void 0 来代替undefined
  */
 void 0
+
+
+/**
+ * 检测 +0 与 -0
+ * 首先判断 两者都是0
+ * 再判断 1 除以两者以后是否相同
+ * 如果不同那么就是符号不同
+ * -Infinite 与 InFinite
+ */
+
+a ===0 && a === b &&  1 / a === 1 / b;
+
+
+/**
+ * 检测NaN
+ * 可以调用isNaN方法 
+ * js中只有NaN不等于自己
+ */
+isNaN(obj) 
+obj !== obj
