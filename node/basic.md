@@ -174,7 +174,7 @@ process.next优先级更高，主要是因为process.nextTick属于idle观察者
 - Promise／Deferred模式
 - 流程控制库
 
-# 事件发布／订阅模式
+### 事件发布／订阅模式
 把回调函数当作一种事件来处理。 有事件的生产者发布消息，由事件监听者订阅消息并执行对应的回调函数。
 
 事件发布与订阅并不是严格意义的异步解决方案，但是它的完成是依赖于事件循环体系，所以也广泛应用于解决异步回调问题。
@@ -191,3 +191,43 @@ emitter.emit('event1', "I am message!");
 event.once("event1", callback);  // 只可能被执行一次
 proxy.all("template", "data", "resources", callback);  // 多事件之间协同作战
 ```
+
+### Promise／Deferred模式
+
+Promise/A抽象定义
+- Promise操作只有三种状态：未完成态、完成态、失败态
+- Promise状态只能从未完成向完成或失败转换，且不能逆反。完成态和失败态不能互相转换
+- Promise状态一旦改变，将不能再次被更改
+
+events模块来模拟Promise实现
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs06.jpeg)
+
+接着来看Deferred， Deferred其实是用来触发Promise的
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs07.jpeg)
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs08.jpeg)
+
+Promise／Deferred之间的差别就在于Deferred主要是用于内部，维护异步模型的状态，而Promise主要用于外部，把then暴露给外界添加自定义逻辑。
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs09.jpeg)
+
+### 流程控制库
+这里没有一个统一的规范，各路神仙大显神通。
+#### 尾触发与Next
+非常适合中间件的使用
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs10.jpeg)
+#### async
+略过
+
+## 异步并发控制
+这里的并发不是表面线程、进程层面上的并发， 而是异步概念的并发
+```js
+for(let i =0; i< 100; i++){
+  async();
+}
+```
+尽管可以很简单的同时打开100个异步请求去，类似于读取磁盘文件，但是磁盘也是有过载保护的。 所以还是需要控制异步的数量
+
+给出了一个包`bagpipe`， 这个包就是一个池子，每次像池子里面`push`，当出水口不满时，就持续增加水流(加大执行个数)，当出水口满了，多余的水则待在池子里等着。
+
+
+
+
