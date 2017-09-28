@@ -228,6 +228,54 @@ for(let i =0; i< 100; i++){
 
 给出了一个包`bagpipe`， 这个包就是一个池子，每次像池子里面`push`，当出水口不满时，就持续增加水流(加大执行个数)，当出水口满了，多余的水则待在池子里等着。
 
+## V8内存
+一般服务器端的后台开发都不会有内存限制，但是由于Node是构建于V8之上，因此V8对内存的限制也就限制了Node，同时Node对JS对象的管理都是通过V8自己的方式来进行分配和管理的。(64位一般约为1.4G， 32位约为0.7G)
 
+V8中所有JS对象都是通过堆来进行分配的，Node中提供了查看内存使用量的方法`process.memoryUsage()`，其中heapTotal是V8申请到的内存，heapUsed是使用的内存量。当然也可以`--max-old-space-size(单位为MB) 或 --max-new-space-size(单位为KB)来更改内存限制`
 
+V8为何要做内存限制呢？
 
+深层原因是V8的垃圾回收机制，官方测试1.5G的堆内存垃圾回收为例，V8做一次小的垃圾回收需要50ms，做一次非增量式的垃圾回收甚至需要1秒以上，这段时间是垃圾回收引起JS线程暂停的时间，应用性能和响应能力都直线下降，这是前端或者后端都不能接受的。
+
+V8内存主要分为新生代和老生代两代。 也就是前面提到的`new-space`与`old-space`。新生代内存中对象为存活时间较短的对象，老生代内存中对象为存活时间较长或者常驻内存的对象。
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs11.jpeg)
+老生代的大小：在Node源码中可以看到，在64位系统下为1400MB，在32位系统下为700MB，也就是前面说的约。
+
+新生代内存： 由两个reserved\_semispace\_size\_构成。reserved\_semispace\_size\_在64位系统32位系统上分别为16MB和8MB， 然后double一下。
+
+## V8垃圾回收机制
+没有一种垃圾回收机制可以完美应对各种环境，因此V8其实采用了多种解决方案，将内存分为新老生代就是其中一种办法。
+
+### 新生代
+刚才提到新生代其实是由两个reserved\_semispace\_size\_构成，新生代垃圾回收主要采用的是Scavenge思想的Cheney实现算法。 将堆内存一分为二，称为semispace，两个中一个处于活动状态，一个处于闲置状态。处于使用状态的称为From，闲置状态的称为To。分配对象时分配给From，垃圾回收时将活动的对象复制到To，垃圾回收结束后将From和To对调，然后释放掉To(对调前的From)。
+
+Scavenge思想是一种典型的空间换时间的思路，因此无法应用在大规模的垃圾回收中。但是比较适合新生代内存，空间小，生命周期短的特性。
+
+在由From向To转换的过程中，需要进行特定的检查，经过一定检查的对象需要转移到老生代内存中，完成晋升。
+- 检查一： 是否经历过Scavenge检测
+- 检查二： To空间内存占比超过一定比例(比例为25%， 因为将To转换为From之后还要负责接收新的对象内存开销)
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs12.jpeg)
+
+### 老生代
+Mark-Sweep & Mark-Compact共同完成老生代的垃圾回收。 老生代特点是存活对象比例大且存活时间长。
+
+Mark-Sweep分为标记与清除阶段。先将所有存活对象进行标记，其后再将所有未标记对象清除。 但是造成的后果就是，清除后得到的都是一堆不连续的内存地址，如果下次需要分配比较大的空间可能无法完成，然后提前触发一次不必要的垃圾回收。
+
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs13.jpeg)
+
+为了解决清除后内存地址不连贯的问题，提出了Mark-Compact思路，在清除阶段将所有存活对象向内存一端移动，之后清除掉存活对象内存边界外的即可。
+
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs14.jpeg)
+
+因为需要对象的移动，因此Mark-Compact并不是完全优于Mark-Sweep的，两者在工作中也是互补的。 大部分时间进行Mark-Sweep逻辑，当空间不足时使用Mark-Compact。
+
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs15.jpeg)
+
+## Incremental Marking
+垃圾回收机制一般都需要将程序逻辑执行暂时暂停，以确保JavaScript应用程序与垃圾回收器一致，这种行为一般称为全停顿(stop-the-world)。新生代由于体积小，即使全停顿影响也不大，但是老生代由于体积较大，全停顿带来的影响还是比较明显的。因此V8推出了增量标记(Incremental Marking)的方式来将原本一次标记清除拆分为多次执行，没做完一小步就让JS执行一会，再标记，再让JS执行，知道完成所有标记。
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs16.jpeg)
+
+因此要提高整体程序执行效率就要减少老生代的垃圾回收次数。
+
+## V8内存--堆外内存
+在调用process.momoryUsage()有一个属性为rss，全称为resident set size，进程的常驻内存部分。heapTotal是堆申请到的总内存。 因此与之对应的还有堆外内存。 rss减去heapTotal就是堆外内存所占用的大小。 _`V8对堆外内存没有限制，因此可以使用堆外内存来突破普通内存的限制`_。直接的方法就是Buffer对象，在Node中为了满足流处理，简单的字符串操作不能满足性能需求，因此Buffer对象由Node进行操作，不由V8管理。
