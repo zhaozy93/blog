@@ -279,3 +279,32 @@ Mark-Sweep分为标记与清除阶段。先将所有存活对象进行标记，�
 
 ## V8内存--堆外内存
 在调用process.momoryUsage()有一个属性为rss，全称为resident set size，进程的常驻内存部分。heapTotal是堆申请到的总内存。 因此与之对应的还有堆外内存。 rss减去heapTotal就是堆外内存所占用的大小。 _`V8对堆外内存没有限制，因此可以使用堆外内存来突破普通内存的限制`_。直接的方法就是Buffer对象，在Node中为了满足流处理，简单的字符串操作不能满足性能需求，因此Buffer对象由Node进行操作，不由V8管理。
+
+
+## Buffer
+### 字节（Byte）
+字节是通过网络传输信息（或在硬盘或内存中存储信息）的单位。字节是计算机信息技术用于计量存储容量和传输容量的一种计量单位，1个字节等于8位二进制，它是一个8位的二进制数，是一个很具体的存储空间。
+
+### Buffer结构
+Buffer模块是JS与C++结合的模块，性能部分由C++实现，非性能部分由JS实现。 同时Buffer属于堆外内存。
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs17.jpeg)
+
+### Buffer对象介绍
+buffer对象类似于数组，每个元素是由两位16进制组成，即0-255数值。
+
+但是下面的例子可以看得出来，不同编码格式、不同字符占用的buffer的元素个数不一样。 utf-8编码中汉子占3个位置。
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs18.jpeg)
+
+### Buffer内存
+Buffer性能部分由C++实现，当然内存部分肯定由C++实现。 是由C++申请内存，JS分配内存的策略。 但是C++频繁申请内存也会造成较大系统压力。
+
+Node采用slab(动态内存管理机制)分配机制，C++每次申请一个特定大小(大小Buffer对象的区分线)的内存，如果Buffer对象小于这个这个界限，那么创建一个slab单元(内存大小就是区分值)，并且分配足够的内存给Buffer对象，同时Buffer对象的parent指向这个slab单元，并且记录下从slab哪里开始到哪里结束。 当再次新建小对象时检测当前的slab空间是否足够，不足的话再申请一个slab空间，同时上一次slab剩余的空间就被浪费了。 如果申请一个足够大的Buffer对象，那么直接申请一个足够大的slab对象，并且这个slab对象被独占。
+
+### Buffer与字符串转换
+`new Buffer(str, [encoding]);`可以实现字符串向buffer转换，但是只能指定一种编码格式。
+
+`buffer.write(str, [offset], [length], [enconding])` 可以实现同一buffer指定不同编码格式。 但是转换为字符串时需要特别注意。
+
+`buf.toString([encoding], [start], [end])`buffer转字符串。
+
+### 
