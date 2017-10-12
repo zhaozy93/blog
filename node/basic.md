@@ -307,4 +307,31 @@ Node采用slab(动态内存管理机制)分配机制，C++每次申请一个特�
 
 `buf.toString([encoding], [start], [end])`buffer转字符串。
 
-### 
+### Buffer读取
+前面提到过在utf8编码下汉字占3个字符，但是如果我们在读取的时候恰好最后2个字符，那么正好读出来就会是乱码。 
+- readable.setEncoding(encoding)
+- chunks = []; chunks.push(chunk); size += chunk.length;  ==> Buffer.concat(chunks, size)
+
+
+##网络编程
+OSI模型7层构成
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs19.jpeg)
+
+### http
+利用curl -v来看 http组成
+- tcp三次握手
+- 请求报头
+- 响应内容： 响应头+响应体
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs20.jpeg)
+
+### http与tcp
+http协议是基于tcp协议的，node中http服务继承TCP服务器(net模块)，由于采用事件驱动(请求视为一个事件),不会创建额外的线程或进程，因此保持低内存，便于高并发。但是开启keepalive之后，一个TCP回话可以用于多次请求和响应。TCP以connection为单位，http以request为单位。 http模块是connection到request的封装。
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs21.jpeg)
+
+### websocket握手
+请求头中包含Sec-WebSocket-Key字段，服务器将其与”258EAFA5-E914-47DA-95CA-C5AB0DC85B11″这个字符串进行拼接，然后对拼接后的字符串进行sha-1运算，再进行base64编码，最后以“Sec-WebSocket-Accept”字段形式返回给客户端。 客户端验证通过则握手成功。
+
+### 网络传输加密与解密
+在客户端与服务器建立安全传输之前，两者需要互换公钥。
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs22.jpeg)
+
