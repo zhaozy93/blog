@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  
+  "name": "Time recorder",
+  "description": "This extension allows the user to record counts and time of each page you opened .",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "See Detail!"
+  },
+
+  "background": {
+    "persistent": true,
+    "scripts": ["background.js"]
+  },
+  "icons": { 
+    "16": "icon.png",
+    "48": "icon.png",
+   "128": "icon.png" 
+  },
+
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "background"
+  ]
+}
