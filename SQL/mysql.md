@@ -57,14 +57,14 @@ sql命令不区分大小写，不过将指令大写，表名、列名小写是�
 - Limit: SELECT columnName FROM tableName Limit n1, n2;  // 检索结果只返回限制的从n1条的n2条记录， 记录是从0开始计数的
 - Limit OFFSET: SELECT columnName FROM tableName Limit n1 OFFSET n2;  // 检索结果只返回限制的从n2条的n1条记录
 
-## 排序
+### 排序
 先搜索 再排序
 
 子句： SQL语句由子句构成，有些子句是必需的，而有的是可选的。一个子句通常由一个关键字和所提供的数据组成。子句的例子有SELECT语句的FROM子句，我们在前一章看到过这个子句。 子句的排列顺序会影响最后的结果。
 - ORDER BY: SELECT columnsName FROM tableName ORDER BY columnsName;  // 对搜索结果排序， 可以根据多个列进行排序
 - DESC、ASC: SELECT columnsName FROM tableName ORDER BY columnName1 DESC, columnName2 ASC; // 指定排序方向， 升降序
 
-## 过滤数据
+### 过滤数据
 先搜索 再过滤 最后排序
 
 - WHERE: SELECT columnsName FROM tableName WHERE column = value
@@ -75,7 +75,36 @@ sql命令不区分大小写，不过将指令大写，表名、列名小写是�
 - IN: SELECT columnsName FROM tableName WHERE column1 IN ( value1, valu2, value3)  // IN操作符用来指定条件范围，范围中的每个条件都可以进行匹配。 类似于OR
 - NOT: ex：NOT IN， NOT BETWEEN // 有且只有一个功能，那就是否定它之后所跟的任何条件。
 - LIKE： SELECT columnsName FROM tableName WHERE column LIKE %value%
+- REGEXP: SELECT columnsName FROM tableName WHERE column REGEXP 'regexpattern'
 
-## 通配符
+### 通配符
 - %： 任何字符出现 任意次数  column LIKE '%value%'   %不能匹配NULL
 - _: 下划线只匹配单个字符而不是多个字符。
+
+### 正则匹配
+- |： 或
+- [1234]： 匹配其中一个
+- [1-5]： 匹配范围
+- 匹配字符类(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql02.jpeg)
+- 多次匹配(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql03.jpeg)
+- 定位符
+(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql04.jpeg)
+
+## 计算字段
+- 拼接Concat:  SELECT Concat(string1, column1, string2, column2) FROM tableName
+- 删除空格Trim、RTrim、LTrim: SELECT Trim(Concat(string1, column1, string2, column2)) FROM tableName
+- 使用别名 AS: SELECT Trim(Concat(string1, column1, string2, column2)) AS new_name FROM tableName
+- 算数计算 + - * /: SELECT Trim(Concat(string1, column1, string2, column2)) AS new_name, column1 * column2 AS new_name2 FROM tableName
+
+## 数据处理函数
+每个DBMS对数据处理函数的实现都不尽相同，因此不要过于依赖数据处理函数。
+(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql05.jpeg)
+(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql06.jpeg)
+(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql07.jpeg)
+
+## 汇总数据
+- AVG() 返回某列的平均值  SELECT AVG(colum) as column_average FROM tableName
+- COUNT() 返回某列的行数  COUNT(*) 会计算表内一共有多少行包含NULL， COUNT(column)则会忽略NULL 
+- MAX() 返回某列的最大值
+- MIN() 返回某列的最小值
+- SUM() 返回某列值之和
