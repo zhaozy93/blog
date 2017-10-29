@@ -68,7 +68,7 @@ sql命令不区分大小写，不过将指令大写，表名、列名小写是�
 先搜索 再过滤 最后排序
 
 - WHERE: SELECT columnsName FROM tableName WHERE column = value
-- 操作符(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql01.jpeg)
+- 操作符![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql01.jpeg)
 - 空值检测 WHERE column IS NULL
 - AND： SELECT columnsName FROM tableName WHERE column1 = value1 AND column2 = value2
 - OR: SELECT columnsName FROM tableName WHERE column1 = value1 OR column2 = value2
@@ -85,10 +85,9 @@ sql命令不区分大小写，不过将指令大写，表名、列名小写是�
 - |： 或
 - [1234]： 匹配其中一个
 - [1-5]： 匹配范围
-- 匹配字符类(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql02.jpeg)
-- 多次匹配(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql03.jpeg)
-- 定位符
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql04.jpeg)
+- 匹配字符类![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql02.jpeg)
+- 多次匹配![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql03.jpeg)
+- 定位符![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql04.jpeg)
 
 ### 计算字段
 - 拼接Concat:  SELECT Concat(string1, column1, string2, column2) FROM tableName
@@ -98,9 +97,9 @@ sql命令不区分大小写，不过将指令大写，表名、列名小写是�
 
 ### 数据处理函数
 每个DBMS对数据处理函数的实现都不尽相同，因此不要过于依赖数据处理函数。
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql05.jpeg)
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql06.jpeg)
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql07.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql05.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql06.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql07.jpeg)
 
 ### 汇总数据
 - AVG() 返回某列的平均值  SELECT AVG(colum) as column_average FROM tableName
@@ -124,11 +123,11 @@ GROUP BY 有时会报一个错误
   - 唯一的差别是 WHERE过滤行，而HAVING过滤分组
 
 图中搜索的含义是: WHERE子句过滤所有`prod_price`至少为10的 行。然后按`vend_id`分组数据，最后HAVING子句过滤计数为2或2以上的分组(过滤分组)
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql08.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql08.jpeg)
 
 ### SELECT子句使用顺序
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql09.jpeg)
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql10.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql09.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql10.jpeg)
 
 ### 子查询
 当我们需要先从A表中查出某个数据作为B表的筛选条件时。
@@ -143,7 +142,7 @@ GROUP BY 有时会报一个错误
 - 使用WHERE来表达联结条件 SELECT table1.column1, table2.column2, table2.column3 FROM table1, table2 WHERE table1.column1 = table2.column1
 - 明确指出内部联结 SELECT table1.column1, table2.column2, table2.column3 FROM table1 INNER JOIN table2 ON table1.column1 = table2.column1
 - 使用别名 自联结 SELECT t1.column1, t1.column2 FROM table as t1, table as t2 WHERE t1.c1 = t2.c1 AND t2.c2 = 100
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql11.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql11.jpeg)
 - 外部联结 LEFT/RIGHT OUTER JOIN 外部联结还包括没 有关联行的行： SELECT table1.column1, table2.column2, table2.column3 FROM table1 LEFT OUTER JOIN table2 ON table1.column1 = table2.column1 
 - 内部联结与外部联结区别： 内部联结如果table1中某一行没有在table2中匹配到，那么table1这一行是不会出现在结果中，但是外部联结会保留这一行。  外部联结的LEFT、RIGHT就是用来表明那一张表的每一行都应该被保留
 
@@ -252,8 +251,8 @@ DELETE FROM table WHERE column1 = value1
 - SET PASSWORD = Password('new password');  更改当前用户的密码
 
 权限列表
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql12.jpeg)
-(https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql13.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql12.jpeg)
+![img](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/sql13.jpeg)
 
 
 
