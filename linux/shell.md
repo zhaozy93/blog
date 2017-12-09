@@ -129,6 +129,16 @@
 - [csdn](http://blog.csdn.net/sailor201211/article/details/53215060)
 - [man](https://linux.die.net/man/1/chattr)
 
+
+1801. 修改权限 
+- chgrp: 修改文件所有组 
+  - chgrp -R newGroup filename 
+- chown: 修改文件所有者
+  - chown -R newUser filename 
+  - chown -R newUser:newGroup filename  可一同修改用户组
+- chmod: 改变档案的权限
+  - chmod -R number fileName
+
 18. 文件的特殊权限 SUID, SGID, SBIT
 ![ll](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/linux100.jpeg)
 可以发现passwd文件除了rwx竟然还有一个s权限
@@ -203,3 +213,8 @@ SUID
     find / -perm [+-]modeNUM 按权限搜索
 ```
 [find](http://www.cnblogs.com/peida/archive/2012/11/13/2767374.html)
+
+24. dumpe2fs 查询文件系统信息
+
+25. df 查看当前挂载的文件系统信息
+
