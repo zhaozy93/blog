@@ -2,6 +2,13 @@
 ```
   echo $PATH 可以查看当前有多少环境变量
 ```
+- bash语言选择
+    - echo $LANG 查看当前选择的语言
+    - LANG=en_US 设置语言
+    - LANG=zh_CN.UTF-8
+- sync 数据同步 将内存中数据写回硬盘
+- shutdown、halt、reboot、poweroff 关机、重启
+
 
 1. mkdir -pm
 ```
