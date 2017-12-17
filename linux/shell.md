@@ -234,4 +234,73 @@ SUID
     du -m 以m单位
 ```
 
+27. ln -sf 创建文件连接
+```
+ ln /root/worker/test.js  /peanut/worker/test.js   不添加任何参数就是hard link
+ ln -s  /root/worker/test.js  /peanut/worker/test.js  symbolic link
+ ln -f 如果目标文件存在，删除目标文件再创建连接
+```
+
+
+28. gzip -cdtv#  压缩/解压缩文件
+```
+  gzip -c fileName 压缩数据输入到屏幕上
+  gzip -d fileName.gz解压缩
+  gzip -t 检验压缩文件的一致性，看看文件是否有误
+  gzip -v 显示压缩比等信息
+  gzip -# #取值为1-9,表示压缩比例，默认为6
+```
+
+29. bzip2 -cdkzv#  压缩/解压缩文件
+```
+  bzip2 -c fileName 压缩数据输入到屏幕上
+  bzip2 -d fileName.gz解压缩
+  bzip2 -k 保留原文件
+  bzip2 -z 压缩的参数
+  bzip2 -v 显示压缩比等信息
+  bzip2 -# #取值为1-9,表示压缩比例，默认为6
+```
+
+30. zcat、bzcat 直接读取对应压缩格式的文件 类似于cat
+```
+  zcat fileName.gz
+  bzcat  fileName.bz2
+```
+
+31. tar -j|z -c|t|x -v -f 
+```
+  -j 使用bzip2来打包
+  -z 使用gzip来打包
+
+  -c 新建打包
+  -x 解压缩
+  -t 不解压 仅查看包含哪些文件名
+
+  -v 输出解压/压缩过程
+  -f newFilename filename 重命名
+  tar -jcv -f newFilename filename 压缩
+  tar -jxv -f newFilename filename 解压
+  tar -jtv  filename 查看压缩文件有哪些 
+```
+
+32. alias 查看当前环境配置的别名
+```
+  alias 
+```
+
+33. 文件格式转换
+
+Dos与Linux系统的断行字符不同
+- Dos: CRLF (^M$)
+- Linux: LF ($)
+因此需要转换才能使用
+- dos2unix -kn file newFile
+- unix2doc -kn file newFile
+```
+  dos2unix -k file newFile 保留原文件的mtime时间格式
+  dos2unix -n file newFile 保留原文件，转换后文件输出到newFile
+```
+
+
+
 
