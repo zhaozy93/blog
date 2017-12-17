@@ -285,7 +285,8 @@ SUID
 
 32. alias 查看当前环境配置的别名
 ```
-  alias 
+  alias 查看当前环境有哪些别名配置
+  alias lm = 'ls -al' 设置一个别名
 ```
 
 33. 文件格式转换
@@ -301,6 +302,13 @@ Dos与Linux系统的断行字符不同
   dos2unix -n file newFile 保留原文件，转换后文件输出到newFile
 ```
 
+34. type  查看命令是内置还是file(和which很有替代性哦)
+```
+  type cd    cd is a shell builtin
+  type node  node is /root/.nvm/versions/node/v8.6.0/bin/node
+  type ll    ll is aliased to `ls -l --color=auto'
+```
 
+35. 
 
 
