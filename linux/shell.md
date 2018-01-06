@@ -309,6 +309,112 @@ Dos与Linux系统的断行字符不同
   type ll    ll is aliased to `ls -l --color=auto'
 ```
 
-35. 
+35. $RANDOM  获取随机数 0~32767之间
+```
+  echo $RANDOM 
+  declare -i number=$RANDOM*10/32768 获取0~10之间的数字
+```
 
+36.  PS1 每次按下Enter换行后的最前面的提示符 如[root@54b19e1daacf modules]#
+```
+  echo $PS1   [\u@\h \W]\$   也是默认的linux提示符
+  PS1="[\u@\h \w \A #\#]\$"   可自由设置PS1  设置后[root@54b19e1daacf /lib/modules 15:05 #438]$
+  \d   显示星期月日
+  \H   完整主机名
+  \h   主机名第一个小数点之前的
+  \t   24小时 HH:MM:SS
+  \T   12小时 HH:MM:SS
+  \A   显示时间 24小时 HH:MM
+  \@   显示时间 12小时 am/pm
+  \u   显示用户的账号名称 如 root
+  \v   BASH版本信息
+  \w   完整工作目录
+  \W   basename函数取得的目录名称  最后一个目录名
+  \#   执行的第几个命令
+  \$   提示符 如果是root则为# 其余为$
+```
+
+37. read 读取用户输入
+```
+  read -p "pls input your name" username    -p 显示提示语 
+  read -t 10 username   -t 等待时间
+```
+
+38. cut -dc -f  裁剪命令
+```
+ echo $PATH | cut -d ';' -f 3,5   将输入内容按照 ; 分隔，并且只保留其中第3个和第5个
+ echo $PATH | cut -c 12-          将输入内容的前12个裁减掉
+```
+
+39. grep -acinv --color=auto  '查找的字符串' filename 
+```
+  -a 将binary文件以text文件的方式查找数据
+  -c 计算找到'查找的字符串'的次数
+  -i 忽略大小写
+  -n 输出行号
+  -v 反向选择 即输出没有找到字符串的那些行
+  --color=auto 将找到的关机子部分加颜色显示
+```
+40. sort -fbMnrtuk fileorstdin 排序
+```
+ -f 忽略大小写
+ -b 忽略最前面的空格
+ -M 以月份来排序
+ -n 以数字来排序
+ -r 反向排序
+ -u uniq相同数据只会出现一次
+ -t 分隔符 默认是Tab
+ -k 哪个区间来进行排序
+ ll | grep -v 'total' | sort -nt ' ' -k 8  以文件大小来排列
+```
+
+41. uniq -ic
+```
+  -i 忽略大小写字符
+  -c 进行计数
+  last | grep -v 'wtmp' | cut -d ' ' -f1 | sort | uniq -c 显示过去登录者信息的统计结果
+```
+
+42. wc -lwm 字数统计
+```
+  -l 仅列出行
+  -w 仅列出字(英文符号)
+  -m 仅列出多少字符
+  last | wc
+```
+
+43. tee -a 双向数据
+```
+  -a 追加内容而非覆盖文件内容
+  last | tee -a ~/last.text | grep -v 'wtmp' | cut -d ' ' -f1 | sort | uniq -c 内容被输出到文件 同时屏幕可以继续执行后续管道命令
+```
+
+44. tr -ds 字符串转换
+```
+  -d 删掉字符串
+  -s 替换掉重复的字符
+  last | tr '[a-z]' '[A-Z]' 小写变大写
+  last | tr -d ':'  删除掉:
+```
+
+45. join -ti12 file1 file2  对比相关性
+```
+  -t 默认以空格符分隔数据
+  -i 忽略大小写
+  -1 第一个文件要用哪个字段来分析
+  -2 第二个文件要用哪个字段来分析
+  不好用 
+```
+ 
+46. paste -d file1 file2  直接粘贴在一起
+```
+  -d 指定分隔符 默认Tab
+```
+
+47. expand -t file 将tab转换为空格
+```
+  -t 跟数字表示一个Tab转几个空格 默认是8个
+```
+
+48. 
 
