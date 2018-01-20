@@ -93,7 +93,7 @@
 
 * [underscore重点笔记](https://github.com/zhaozy93/blog/issues/24)(17-09-21)
 
-## Chrome Extension
+## Chrome Extension
 
 * [Chrome插件开发初探](https://github.com/zhaozy93/blog/issues/25)(17-10-15)
 
