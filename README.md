@@ -31,6 +31,9 @@
 
 * [原型链与继承](https://github.com/zhaozy93/blog/issues/23)(17-08-30)
 
+* [高性能JavaScript](https://github.com/zhaozy93/blog/blob/master/md/高性能JAVASCRIPT.md)(18-01-20)
+
+
 ## Node
 * [深入浅出Node.js笔记](https://github.com/zhaozy93/blog/blob/master/node/basic.md)(17-10-08)
 
@@ -45,6 +48,19 @@
 * [谈谈块级元素](https://github.com/zhaozy93/blog/issues/9)
 
 * [读写CSS](https://github.com/zhaozy93/blog/issues/11)(17-07-04)
+
+
+## SQL
+
+* [SQL基础知识](https://github.com/zhaozy93/blog/issues/26)(17-07-23)
+
+## Linux
+
+* [Shell](https://github.com/zhaozy93/blog/blob/master/linux/shell.md)(18-01-20)
+
+* [鸟哥的私房菜](https://github.com/zhaozy93/blog/blob/master/linux/鸟哥私房菜.md)(18-01-20)
+
+
 
 ## jQuery
 * [jQuery笔记small + 总结 ----jQuery源码分析系列](https://github.com/zhaozy93/blog/issues/3)(17-08-06)
@@ -84,7 +100,3 @@
 ## react
 
 * [轮播图组件 react banner slider](https://github.com/zhaozy93/blog/issues/13)(17-07-23)
-
-## SQL
-
-* [SQL基础知识](https://github.com/zhaozy93/blog/issues/26)(17-07-23)
