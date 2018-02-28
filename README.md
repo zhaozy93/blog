@@ -6,6 +6,12 @@
 
 * [fiddle](https://jsfiddle.net/user/peaNut93/fiddles/)
 
+## 网络好文
+
+* [这一次，彻底弄懂 JavaScript 执行机制](https://juejin.im/post/59e85eebf265da430d571f89)(里面也存在片面、误差)
+
+* [Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+
 ## JS
 * [JS 高程杂碎点笔记](https://github.com/zhaozy93/blog/issues/22)(17-08-10)
 
@@ -31,8 +37,9 @@
 
 * [原型链与继承](https://github.com/zhaozy93/blog/issues/23)(17-08-30)
 
-* [高性能JavaScript](https://github.com/zhaozy93/blog/blob/master/md/高性能JAVASCRIPT.md)(18-01-20)
+* [JS语言精粹](https://github.com/zhaozy93/blog/blob/master/md/JS语言精粹.md)(17-11-05)
 
+* [高性能JavaScript](https://github.com/zhaozy93/blog/blob/master/md/高性能JAVASCRIPT.md)(18-01-20)
 
 ## Node
 * [深入浅出Node.js笔记](https://github.com/zhaozy93/blog/blob/master/node/basic.md)(17-10-08)
