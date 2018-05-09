@@ -10,6 +10,7 @@
 ## 网络好文
 
 * [UTF8编码](http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html)
+* [堆、栈](http://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html)
 
 ## GO
 
