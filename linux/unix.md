@@ -114,7 +114,7 @@ note:
 		1. 检查能否加锁
 		2. 进入特殊sleep队列或者加锁成功
 		3. 解锁后幻想所有对应的等待进程
-	![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/unix2-3.jpeg)
+	![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/unix2-7.jpeg)
 	2. 中断: 进程操纵内和数据结构期间可能会被设备中断，假设设备中断也要操纵同样的内核数据结构。  可以通过阻塞中断来解决。   阻塞中断的的方法是创建**临界区**,显示提升ipl，更高级别的中断，防止中断插队
 ### 进程调度
 由于CPU是必须被共享的资源，内核中安排进程间可用CPU时间的部分叫调度器(scheduler)。 
@@ -219,7 +219,7 @@ fork要做许多工作，如初始化子进程的PID、proc结构，设置某些
 	2. 线程库实现
 		1. 每个线程绑定到不同的LWP上，易于实现，但消耗太多资源
 		2. 在一(组)LWP上复用用户线程，消耗少量资源，但无法以一种轻松的方式来保护某个特定线程上的资源
-![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/unix2-3.jpeg)
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/unix3-7.jpeg)
 ### 调度器激活
 基本原则: 内核和用户线程紧密结合。 内核负责处理器的分配，线程库负责调度。 线程库把影响处理器分配的事件通知给内核，内核完全控制处理器的分配。 线程库拿到处理器之后，可以决定哪个线程在哪个处理器上运行。内核拿走处理器后，线程库正确的分配线程在处理器上运行。
 
@@ -270,7 +270,7 @@ Unix提供进程组的概念来控制终端的访问和支持登陆会话。
 	2. 每个控制终端与一个会话和一个前台进程组存在关联
 	3. 会话组长负责管理登录会话和把自己与其他会话隔离开来
 	4. 只有组长有权分配和释放控制终端
-![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/unix2-3.jpeg)
+![image](https://raw.githubusercontent.com/zhaozy93/blog/master/img-bed/unix4-5.jpeg)
 	1. 进程通过调用setsid来创建一个新的会话，用他的PID来设置会话ID和组ID，进程变为会话组长和进程组组长。 只要进程的PID是其他进程组的组ID则无法调用setsid，也就是说进程组组长无法直接调用setsid开启新的会话。 进程组组长必须移动到灵一个进程组来放弃它的进程组领导权再调用setsid开启新的会话和新的进程组
 	2. 进程离开会话的唯一方式就是调用setsid开启一个新的会话，新回话中唯一成员就是这个进程
 	3. 进程组在一个登录会话中表示一个作业。 一个单独的登录会话可以有几个活动的进程组，但只有一个是前台进程组，拥有对终端的无限访问权
