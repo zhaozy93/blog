@@ -145,7 +145,7 @@ unlink(tempfile)
 - 系统崩溃后辅助文件依旧存在
 - 多进程不知道如何通知了，不能轮询尝试加锁，应该释放锁时自动通知正在等待的进程
 - 不释放锁便结束进程
-#### System V IPC
+### System V IPC
 在UNIX system V中引入了几种新的进程通讯方式，即消息队列(Message Queues), 信号量(semaphores) 和共享内存(shared memory)，统称为 System V IPC。
 - IPC具体实例在内核中以对象的形式出现，称为IPC对象
 - 每个IPC对象在内核中有唯一的标识符，在每一类中标志符唯一，不同类别可以出现相同标识符
@@ -155,12 +155,12 @@ unlink(tempfile)
 // 保证pathname 和 proj名称相同，两个进程就会获得同样的key
 key_t ftok(char *pathname, char proj)
 ```
-##### ipcs命令
+#### ipcs命令
 ipcs 命令显示系统内核的IPC对象状况
 - -q 只显示消息队列
 - -m 只显示共享内存
 - -s 只显示信号量
-##### IPC对象结构
+#### IPC对象结构
 ```c
 struct ipc_perm{
     key_t key;  // 关键字
@@ -172,8 +172,8 @@ struct ipc_perm{
     ushort seq;    // 频率信息忽略
 }
 ```
-##### 消息队列
-###### 消息的结构msgbuf
+#### 消息队列
+##### 消息的结构msgbuf
 ```c
 struct msgbuf{
     long mtype;   // message类型，区分消息类型
@@ -188,7 +188,7 @@ struct msgbuf{
     struct client info; // 消息数据的内容 部分
 }
 ```
-###### 消息链表节点msg
+##### 消息链表节点msg
 消息队列在内核中以消息链表的形式出现，链表中每个节点结构就是msg
 ```c
 struct msg{
@@ -199,7 +199,7 @@ struct msg{
     short msg_ts; // 消息长度
 }
 ```
-###### 消息链表
+##### 消息链表
 内核中的每个消息队列对象都对应一个msgqid_ds结构的数据来保存。
 ```c
 struct msgqid_ds{
@@ -218,14 +218,14 @@ struct msgqid_ds{
     __kernel_ipc_pid_t msg_lrpid; // 最后一次取消息的进程pid
 }
 ```
-###### msgget
+##### msgget
 `int msgget(key_t key, int msgflag)`
 - msgget用来创建新的消息队列或获取已有的消息队列。
 - msgflag控制操作
     - IPC_CREAT: 消息队列不存在，则创建，否则进行打开操作
     - IPC_EXCL: 消息队列不存在则创建，存在则产生错误。必须和IPC_CREAT一起使用
     - 0600: 除了前面的符号，还可以最后加权限以 | 分隔
-###### msgsnd
+##### msgsnd
 `int msgsnd(int msqid, struct msgbuf *msgp, int msgsz, int msgflag)`
 - msqid:消息队列id
 - msgbuf: 发送的内容体
@@ -233,14 +233,17 @@ struct msgqid_ds{
 - msgflag: 控制位 
     - 0: 忽略控制位
     - IPC_NOWAIT: 队列满则不写入，不阻塞 立即返回
-###### msgrcv 
+##### msgrcv 
 `int msgrcv(int msqid, struct msgbuf *msgp, int msgsz, long mtype, int msgflag)`
 - mtype: 表示消息类型，如果值为0则返回最旧的消息，否则寻找队列中与之匹配的消息并返回。
 - msgflag与msgsnd的msgflag一致
-###### msgctl 直接控制消息队列的行为
+##### msgctl 直接控制消息队列的行为
 `int msgctl(int msgqid, int cmd, struct msqid_ds *buf)`
 - cmd是要对消息队列的操作
     - IPC_STAT: 去处保存的消息队列数据，存入第三个参数
     - IPC_SET:设定消息队列的msg_perm成员，值由buf给出
     - IPC_EMID:内核中删除消息队列
+
+#### 信号量
+信号量用来控制多个进程对共享资源使用的计数器，常被用于锁定保护机制。
 
