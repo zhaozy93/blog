@@ -99,10 +99,10 @@ int lockf(int fd, int function, long size);
 ```
 - size指明了从文件当前位置开始的一段连续区域长度，size为0时，锁定记录将由当前位置一直到文件尾部。
 - function 可以是
-	- F_ULOCK为一个锁定区域解锁
-	- F_LOCK锁定一个区域
-	- F_TLOCK测试并锁定一个区域
-	- F_TEST 测试一个区域是否上锁
+    - F_ULOCK为一个锁定区域解锁
+    - F_LOCK锁定一个区域
+    - F_TLOCK测试并锁定一个区域
+    - F_TEST 测试一个区域是否上锁
 如果使用F_LOCK，且对应文件已经上锁，那么将会阻塞至文件解锁为止。采用F_TLOCK如果文件已经上锁那么将直接返回不阻塞。
 #### BSD咨询锁
 ```c
@@ -123,7 +123,7 @@ BSD有互斥锁和共享锁两种，多个进程可以用于属于同一文件�
 基于文件一般就要两步，先判断锁是否存在(文件)，不存在再加锁(创建文件)
 ```c
 if((fd=open(file,0))<0){
-	fd=creat(file,0644); 
+    fd=creat(file,0644); 
 }
 ```
 但是所有的两步操作都应该注意 如果中间进程被CPU打断了如何处理的问题，会不会出错
@@ -163,73 +163,84 @@ ipcs 命令显示系统内核的IPC对象状况
 ##### IPC对象结构
 ```c
 struct ipc_perm{
-	key_t key;  // 关键字
-	ushort uid;  // uid
-	ushort gid;   // gid
-	ushort cuid;   // 创建者uid
-	ushort cgid;   // 创建者gid
-	ushort mode;   // 权限
-	ushort seq;    // 频率信息忽略
+    key_t key;  // 关键字
+    ushort uid;  // uid
+    ushort gid;   // gid
+    ushort cuid;   // 创建者uid
+    ushort cgid;   // 创建者gid
+    ushort mode;   // 权限
+    ushort seq;    // 频率信息忽略
 }
 ```
 ##### 消息队列
 ###### 消息的结构msgbuf
 ```c
 struct msgbuf{
-	long mtype;   // message类型，区分消息类型
- 	char mtext[1];  // 消息数据的内容
+    long mtype;   // message类型，区分消息类型
+    char mtext[1];  // 消息数据的内容
 }
 ```
 mtext虽然在定义中只是一个字符数组，事实上，它的对应部分可以是任意的数据类型，甚至是多个数据类型的集合。 但是加mtype所占的4个字节，每个msgbuf最多占用4056个字节。 例如
 ```c
 struct msgbuf{
-	long mtype;   // message类型，区分消息类型
- 	long request_id;  // 消息数据的内容 部分
-	struct client info; // 消息数据的内容 部分
+    long mtype;   // message类型，区分消息类型
+    long request_id;  // 消息数据的内容 部分
+    struct client info; // 消息数据的内容 部分
 }
 ```
 ###### 消息链表节点msg
 消息队列在内核中以消息链表的形式出现，链表中每个节点结构就是msg
 ```c
 struct msg{
-	struct msg *msg_next; //下一个节点的指针
-	long msg_type;  // 和msgbuf中mtype 一样
-	char *msg_spot; // 消息内容即msgbuf中mtext在内存中位置
-	time_t msg_stime;
-	short msg_ts; // 消息长度
+    struct msg *msg_next; //下一个节点的指针
+    long msg_type;  // 和msgbuf中mtype 一样
+    char *msg_spot; // 消息内容即msgbuf中mtext在内存中位置
+    time_t msg_stime;
+    short msg_ts; // 消息长度
 }
 ```
 ###### 消息链表
 内核中的每个消息队列对象都对应一个msgqid_ds结构的数据来保存。
 ```c
 struct msgqid_ds{
-	struct ipc_perm msg_perm;
-	struct msg *msg_firts;
-	struct msg *msg_last;
-	__kernel_time_t msg_stime; // 最近一次接受消息的时间
-	__kernel_time_t msg_rtime; // 最近一次取出消息时间
-	__kernel_time_t msg_ctime; // 最近一次队列发生改动的时间
-	struct wait_queue *wwait; // 等待队列的指针
-	struct wait_queue *rwait; // 等待队列的指针
-	unsigned short msg_cbytes; // number of bytes 
-	unsigned short msg_qnum; // number of msg
-	unsigned short msg_qybytes; // 占用内存的最大字节数
-	__kernel_ipc_pid_t msg_lspid; // 最后一次发送消息的进程pid
-	__kernel_ipc_pid_t msg_lrpid; // 最后一次取消息的进程pid
+    struct ipc_perm msg_perm;
+    struct msg *msg_firts;
+    struct msg *msg_last;
+    __kernel_time_t msg_stime; // 最近一次接受消息的时间
+    __kernel_time_t msg_rtime; // 最近一次取出消息时间
+    __kernel_time_t msg_ctime; // 最近一次队列发生改动的时间
+    struct wait_queue *wwait; // 等待队列的指针
+    struct wait_queue *rwait; // 等待队列的指针
+    unsigned short msg_cbytes; // number of bytes 
+    unsigned short msg_qnum; // number of msg
+    unsigned short msg_qybytes; // 占用内存的最大字节数
+    __kernel_ipc_pid_t msg_lspid; // 最后一次发送消息的进程pid
+    __kernel_ipc_pid_t msg_lrpid; // 最后一次取消息的进程pid
 }
 ```
 ###### msgget
 `int msgget(key_t key, int msgflag)`
 - msgget用来创建新的消息队列或获取已有的消息队列。
 - msgflag控制操作
-	- IPC_CREAT: 消息队列不存在，则创建，否则进行打开操作
-	- IPC_EXCL: 消息队列不存在则创建，存在则产生错误。必须和IPC_CREAT一起使用
-	- 0600: 除了前面的符号，还可以最后加权限以 | 分隔
+    - IPC_CREAT: 消息队列不存在，则创建，否则进行打开操作
+    - IPC_EXCL: 消息队列不存在则创建，存在则产生错误。必须和IPC_CREAT一起使用
+    - 0600: 除了前面的符号，还可以最后加权限以 | 分隔
 ###### msgsnd
 `int msgsnd(int msqid, struct msgbuf *msgp, int msgsz, int msgflag)`
 - msqid:消息队列id
 - msgbuf: 发送的内容体
 - msgsz: 消息长度， sizeof(struct buf) - sizeof(long)
 - msgflag: 控制位 
-	- 0: 忽略控制位
-	- IPC_NOWAIT: 队列满则不写入，不阻塞 立即返回
+    - 0: 忽略控制位
+    - IPC_NOWAIT: 队列满则不写入，不阻塞 立即返回
+###### msgrcv 
+`int msgrcv(int msqid, struct msgbuf *msgp, int msgsz, long mtype, int msgflag)`
+- mtype: 表示消息类型，如果值为0则返回最旧的消息，否则寻找队列中与之匹配的消息并返回。
+- msgflag与msgsnd的msgflag一致
+###### msgctl 直接控制消息队列的行为
+`int msgctl(int msgqid, int cmd, struct msqid_ds *buf)`
+- cmd是要对消息队列的操作
+    - IPC_STAT: 去处保存的消息队列数据，存入第三个参数
+    - IPC_SET:设定消息队列的msg_perm成员，值由buf给出
+    - IPC_EMID:内核中删除消息队列
+
