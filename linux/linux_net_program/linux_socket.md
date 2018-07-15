@@ -245,5 +245,104 @@ struct msgqid_ds{
     - IPC_EMID:内核中删除消息队列
 
 #### 信号量
-信号量用来控制多个进程对共享资源使用的计数器，常被用于锁定保护机制。
+信号量用来控制多个进程对共享资源使用的计数器，常被用于锁定保护机制。信号量对象实际是多个信号量的集合。内核中以数组形式实现。
+##### 信号量数据结构
+**sem**:
+```c
+struct sem{
+    short sempid;   // 最近一次操作信号量的进程pid
+    ushort semval;   // 信号量的计数值
+    ushort  semncnt;  // 等待使用资源的进程数目
+    ushort semzcnt; // 等待资源完全空闲的进程数目
+}
+```
+**semid_qs**: semid_qs结构被用来存储每个信号量对象的有关信息。
+```c
+struct semid_ds{
+    struct ipc_perm sem_perm; // 与ipc_perm类似
+    __kernel_time_t sem_otime;  // 最后一次semop()操作的时间
+    __kernel_time_t sem_ctime;   // 最后一次改动发生的时间
+    struct sem *sem_base; // 信号量数组的起始地址
+    struct sem_queue *sem_pending;  // 还没进行的操作
+    struct sem_queue **sem_pending_lat; // 最后一个还没进行的操作
+    struct sem_undo *undo; // undo请求的数目
+    unsigned short sem_nsems; // 信号量数组的成员数目
+}
+```
+**sembuf**: 定义信号量对象的基本操作
+```c
+struct sembuf{
+    unsigned short sem_num;  // 接受操作的信号量在信号量数组中的序号
+    short sem_op    // 定义了信号量可进行的操作(正、负、0)
+    short sem_flg;  // 控制操作行为的标志
+}
+```
+sem_op为负数，表示从指定信号量中减去相应的值，对应着获取信号量所监控的资源的操作。 没有指定sem_flg=IPC_NOWAIT标志，那么如果现有信号量数值小于sem_op绝对值(现有资源少于要获取的资源)，调用semop()函数的进程就会被阻塞直到信号量数值大于sem_op绝对值(有足够资源被释放)
+sem_op正数，指定的信号量中加上相应的值，对应着释放信号量所监控的资源操作
+sem_op为0，那么调用semop()函数的进程将会被阻塞直到对应信号量变为0。操作的实质就是等待信号量所监控的资源被全部使用，动态监控资源的使用并调整资源的分配，避免不必要的等待
+##### 相关函数
+**semget**: 建立新的信号量对象或者获取已有的对象的标识符
+```
+int semget (key_t key, int nsems, int semflg); 
+// key和semflg与msgget中的参数一致
+// nsems 指定了新生成的信号量对象中的信号量的数目，也就是数组长度
+```
+**semop**: 改变信号量对象中的各个信号量的状态
+```c
+* int semop ( int semid, struct sembuf *sops, unsigned nsops); 
+// semid表示要操作的信号量对象
+// sops 就是操作的内容
+// nsops保存sops数组的长度，也即semop函数将要进行的操作个数
+```
+举个例子，如果有一个信号量监控一台最多处理10份作业的打印机，想打印机提交任务的时候。 需要先设置一个任务，在执行后再释放资源
+```c
+struct sembuf sem_get = { 0, -1, IPC_NOWAIT }; 
+if((semop(sid, &sem_get, 1) == -1) {
+    perror("semop"); 
+}
+// do.....
+struct sembuf sem_release= { 0, 1, IPC_NOWAIT }; 
+semop(sid,&sem_release,1); 
+```
+**semctl**:直接对信号量对象进行操作，但由于信号量对象是一个数组，需要制定操作的具体index，同时cmd比msgctl更多。 大同小异
+```c
+int semctl ( int semid, int semnum, int cmd, union semun arg ); 
+```
+#### 共享内存
+被多个进程共享的内存。最快的同新方法，直接将信息映射到内存，省去其他IPC方法的中间步骤
+##### 数据结构
+**shmid_ds**: 
+```c
+struct shmid_ds { 
+    struct ipc_perm  shm_perm;  // 权限信息
+    int              shm_segsz;  // 共享内存的大小 字节为单位
+    __kernel_time_t  shm_atime;  // 最近一次进程连接共享内存的时间
+    __kernel_time_t  shm_dtime;  // 最近一次进程断开共享内存的时间
+    __kernel_time_t  shm_ctime;  // 最近一次shmid_ds结构更改的时间
+    __kernel_ipc_pid_t  shm_cpid; // 创建内存的pid
+    __kernel_ipc_pid_t  shm_lpid;  // 最近一次连接内存的进程pid
+    unsigned short      shm_nattch; // 与共享内存连接的进程数目
+    unsigned short    shm_unused;
+    void               *shm_unused2;
+    void               *shm_unused3;
+```
+##### 函数操作
+**sys_shmget**: 创建和获取已有的共享内存
+```c
+int shmget ( key_t key, int size, int shmflg); 
+```
+**shmat**: 当一个进程使用shmget函数获得共享内存标识符之后，可以使用shmat将共享内存映射到晋城自己的内存空间内。之后就像普通内存一样读写了
+```c
+int shmat ( int shmid, char *shmaddr, int shmflg); 
+// shmaddr表示共享内存映射的地址，但要预先分配内存，不方便，因此一般都是置零，系统会自动分配一块未使用内存。
+// 如果shmflg指定为SHM_RDONLY则是只读模式
+```
+**shmctl**:  直接对共享内存操作
+**shmdt**: 当不需要共享内存时应该断开连接
+```c
+int shmdt ( char *shmaddr ); 
+```
+#### 共享内存与信号量结合使用
+共享内存效率最高，但是要保证一致性原则，使用信号量来实现锁机制。 
+
 
