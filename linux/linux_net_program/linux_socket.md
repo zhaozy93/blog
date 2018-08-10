@@ -622,4 +622,21 @@ SNMP 超级用户准备的服务，超级用户可以通过它来进行简单的
 
 ### 套接字地址
 它是通过标准的UNIX文件描述符和其他的程序通讯的一个方法
+#### 数据如何传输
+数据切分成包，包的数据头被第一层(HTTP协议)协议加上第一层协议数据，然后整个包再被下层协议包装一次(UDP)，然后再被下层协议包装(IP协议)，最后被底层硬件层包装一层信息(Ethernet信息头)
 
+### 系统调用
+int socket (int domain, int type, int protocol)  创建socket描述符
+close(sockfd)
+int shutdown(int sockfd, int how)
+#### 有连接的
+int bind(int sockfd,  struct sockaddr *my_addr, int addrlen);  将一个socket描述符和系统一个端口绑定
+int listen(int sockfd, int backlog)  创建等待连接请求， backlog为等待最大队列长度
+int accept(int sockfd, void *addr, int *addrlen) 接收连接请求，之后会产生一个新的fd，原fd不变，新的fd可以进行send()和recv()操作
+int send(int sockfd, const void *msg, int len, int flags) 与远程连接建立的socket 发送信息到远程机器
+int recv(int sockfd, void *buf, int len, unsigned int flags) 读取远程连接发来的数据，指定缓冲区长度
+int connect (int sockfd, struct sockaddr *serv_addr, int addrlen) 连接到远程服务器
+intgetpeername(int sockfd, struct sockaddr *addr, int *addrlen)获取远程连接的是谁
+#### 无连接的
+int sendto(int sockfd, const void *msg, int len, unsigned int flags, const struct sockaddr *to, int tolen) 与send类似，但是无提前建立好的连接符，但是知道对方的ip和端口
+int  recvfrom() 与send类似
