@@ -630,6 +630,7 @@ int socket (int domain, int type, int protocol)  创建socket描述符
 close(sockfd)
 int shutdown(int sockfd, int how)
 #### 有连接的
+```
 int bind(int sockfd,  struct sockaddr *my_addr, int addrlen);  将一个socket描述符和系统一个端口绑定
 int listen(int sockfd, int backlog)  创建等待连接请求， backlog为等待最大队列长度
 int accept(int sockfd, void *addr, int *addrlen) 接收连接请求，之后会产生一个新的fd，原fd不变，新的fd可以进行send()和recv()操作
@@ -637,6 +638,56 @@ int send(int sockfd, const void *msg, int len, int flags) 与远程连接建立�
 int recv(int sockfd, void *buf, int len, unsigned int flags) 读取远程连接发来的数据，指定缓冲区长度
 int connect (int sockfd, struct sockaddr *serv_addr, int addrlen) 连接到远程服务器
 intgetpeername(int sockfd, struct sockaddr *addr, int *addrlen)获取远程连接的是谁
+```
 #### 无连接的
-int sendto(int sockfd, const void *msg, int len, unsigned int flags, const struct sockaddr *to, int tolen) 与send类似，但是无提前建立好的连接符，但是知道对方的ip和端口
+`int sendto(int sockfd, const void *msg, int len, unsigned int flags, const struct sockaddr *to, int tolen) `与send类似，但是无提前建立好的连接符，但是知道对方的ip和端口
 int  recvfrom() 与send类似
+### IO模式
+对于网络请求，数据从网络层拷贝到内核缓存区，再从内核缓冲区拷贝到程序的数据区
+
+图11
+
+#### 阻塞IO
+
+图6
+
+
+#### 非阻塞IO
+在请求IO操作时，立即返回一个错误，然后程序之后主动循环去请求IO是否完成(polling操作)，但这极大浪费CPU
+
+图7
+
+#### IO多路复用
+调用`select`或者`poll`函数，在调用他们的时候阻塞，在得到某个可以操作的文件描述符之后再调用`recvfrom`，优势在于可以一次监听多个文件描述符，只要其中有一个是可操作状态之后，`select`就会返回
+
+图8
+
+#### 信号驱动IO
+在调用IO操作时，立即返回。 等待IO操作准备就绪后，发送一个信号(SIGIO)给程序，程序在收到信号后再进行IO处理操作。
+
+图9
+
+#### 异步IO
+程序告诉内核要进行什么IO操作，然后立即返回，内核在完成全部操作后通知程序，完成了IO操作
+与信号驱动区别
+    - 信号驱动在文件描述符可以被操作时通知程序
+    - 异步IO在内核完成所有IO操作后通知程序
+
+#### fcntl()
+将一个套接字设置为非阻塞模式，之后需要不断轮序，如果无可读取数据则会立刻返回-1
+```
+sockfd = socket(AF_INET, SOCK_STREAM, 0);
+fcntl(sockfd, F_SETFL, O_NONBLOCK)
+```
+
+
+
+
+
+
+
+
+
+
+
+
