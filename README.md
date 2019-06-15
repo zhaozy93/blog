@@ -29,6 +29,8 @@
 
 ## Linux
 
+* [Shell](https://github.com/zhaozy93/blog/blob/master/linux/shell学习笔记.md)(19-06-11)
+
 * [Shell](https://github.com/zhaozy93/blog/blob/master/linux/shell.md)(18-01-20)
 
 * [鸟哥的私房菜](https://github.com/zhaozy93/blog/blob/master/linux/鸟哥私房菜.md)(18-01-20)
