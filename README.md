@@ -16,6 +16,8 @@
 ## GO
 
 * [String中文处理](https://github.com/zhaozy93/blog/blob/master/go/string.md)(18/05/01)
+* [包管理之GOPATH和Vendor](https://github.com/zhaozy93/blog/blob/master/go/gopath_vendor.md)(19/07/22)
+
 
 ### C++
 
