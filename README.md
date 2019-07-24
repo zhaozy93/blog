@@ -17,6 +17,7 @@
 
 * [String中文处理](https://github.com/zhaozy93/blog/blob/master/go/string.md)(18/05/01)
 * [包管理之GOPATH和Vendor](https://github.com/zhaozy93/blog/blob/master/go/gopath_vendor.md)(19/07/22)
+* [包管理之Modules](https://github.com/zhaozy93/blog/blob/master/go/gomodules.md)(19/07/23)
 
 
 ### C++
@@ -31,7 +32,7 @@
 
 ## Linux
 
-* [Shell](https://github.com/zhaozy93/blog/blob/master/linux/shell学习笔记.md)(19-06-11)
+* [Shell再学](https://github.com/zhaozy93/blog/blob/master/linux/shell学习笔记.md)(19-06-11)
 
 * [Shell](https://github.com/zhaozy93/blog/blob/master/linux/shell.md)(18-01-20)
 
